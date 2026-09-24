@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AutoBuy - Перекуп</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        background: #1a1a2e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 10px;
+    }
+
+    .phone {
+        width: 375px;
+        height: 780px;
+        background: #0f0f1e;
+        border-radius: 40px;
+        border: 12px solid #000;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 60px rgba(0, 255, 136, 0.3);
+    }
+
+    .notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 25px;
+        background: #000;
+        border-radius: 0 0 20px 20px;
+        z-index: 100;
+    }
+
+    .status-bar {
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 25px;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        padding-top: 10px;
+    }
+
+    .app-header {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #1e1e3a;
+    }
+
+    .app-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #00ff88, #00cc6a);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .logo-text {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .logo-text span {
+        color: #00ff88;
+    }
+
+    .balance {
+        background: linear-gradient(135deg, #1e1e3a, #2a2a4a);
+        padding: 8px 14px;
+        border-radius: 12px;
+        border: 1px solid #00ff88;
+    }
+
+    .balance-label {
+        color: #888;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .balance-value {
+        color: #00ff88;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .tabs {
+        display: flex;
+        padding: 10px 15px;
+        gap: 8px;
+        border-bottom: 1px solid #1e1e3a;
+    }
+
+    .tab {
+        flex: 1;
+        padding: 10px;
+        background: #1a1a2e;
+        border: none;
+        color: #888;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .tab.active {
+        background: linear-gradient(135deg, #00ff88, #00cc6a);
+        color: #0f0f1e;
+    }
+
+    .tab:hover:not(.active) {
+        background: #22223a;
+        color: #ccc;
+    }
+
+    .content {
+        height: calc(100% - 40px - 65px - 55px);
+        overflow-y: auto;
+        padding: 15px;
+        scrollbar-width: thin;
+        scrollbar-color: #00ff88 #1a1a2e;
+    }
+
+    .content::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .content::-webkit-scrollbar-track {
+        background: #1a1a2e;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+        background: #00ff88;
+        border-radius: 2px;
+    }
+
+    .car-card {
+        background: linear-gradient(135deg, #1a1a2e, #22223a);
+        border-radius: 16px;
+        padding: 15px;
+        margin-bottom: 12px;
+        border: 1px solid #2a2a4a;
+        transition: all 0.3s;
+    }
+
+    .car-card:hover {
+        border-color: #00ff88;
+        transform: translateY(-2px);
+    }
+
+    .car-card.owned {
+        border-color: #ffaa00;
+    }
+
+    .car-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .car-emoji {
+        font-size: 40px;
+        filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+    }
+
+    .car-name {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .car-year {
+        color: #666;
+        font-size: 11px;
+    }
+
+    .car-price {
+        color: #00ff88;
+        font-size: 18px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .car-price-label {
+        color: #666;
+        font-size: 10px;
+        text-align: right;
+    }
+
+    .car-stats {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .stat {
+        flex: 1;
+        background: #0f0f1e;
+        padding: 6px 8px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 9px;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        color: #ccc;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .btn-buy {
+        background: linear-gradient(135deg, #00ff88, #00cc6a);
+        color: #0f0f1e;
+    }
+
+    .btn-buy:disabled {
+        background: #333;
+        color: #666;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-sell {
+        background: linear-gradient(135deg, #ffaa00, #ff8800);
+        color: #0f0f1e;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: #555;
+    }
+
+    .empty-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-text {
+        font-size: 14px;
+    }
+
+    .bottom-nav {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 55px;
+        background: #1a1a2e;
+        border-top: 1px solid #2a2a4a;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding-bottom: 10px;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        cursor: pointer;
+        color: #555;
+        transition: color 0.3s;
+        padding: 5px 15px;
+    }
+
+    .nav-item.active {
+        color: #00ff88;
+    }
+
+    .nav-icon {
+        font-size: 20px;
+    }
+
+    .nav-label {
+        font-size: 9px;
+        font-weight: 600;
+    }
+
+    .toast {
+        position: absolute;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-20px);
+        background: #00ff88;
+        color: #0f0f1e;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 13px;
+        opacity: 0;
+        transition: all 0.3s;
+        pointer-events: none;
+        z-index: 200;
+        white-space: nowrap;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+        background: #ff4444;
+        color: #fff;
+    }
+
+    .section-title {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+
+    .profit-tag {
+        display: inline-block;
+        background: rgba(0, 255, 136, 0.15);
+        color: #00ff88;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        margin-left: 8px;
+        font-weight: 600;
+    }
+</style>
+</head>
+<body>
+<div class="phone">
+    <div class="notch"></div>
+    
+    <div class="status-bar">
+        <span id="clock">9:41</span>
+        <span>📶 🔋 100%</span>
+    </div>
+
+    <div class="app-header">
+        <div class="app-logo">
+            <div class="logo-icon">🚗</div>
+            <div class="logo-text">Auto<span>Buy</span></div>
+        </div>
+        <div class="balance">
+            <div class="balance-label">Баланс</div>
+            <div class="balance-value" id="balance">$10 000</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('market')">🏪 Рынок</button>
+        <button class="tab" onclick="switchTab('garage')">🚗 Гараж</button>
+    </div>
+
+    <div class="content" id="content"></div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('market')">
+            <div class="nav-icon">🏪</div>
+            <div class="nav-label">Рынок</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('garage')">
+            <div class="nav-icon">🚗</div>
+            <div class="nav-label">Гараж</div>
+        </div>
+        <div class="nav-item" onclick="resetGame()">
+            <div class="nav-icon">🔄</div>
+            <div class="nav-label">Сброс</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+</div>
+
+<script>
+    const CAR_MODELS = [
+        { name: 'Lada Priora', emoji: '🚗', year: 2012, basePrice: 2500, power: 98 },
+        { name: 'Renault Logan', emoji: '🚙', year: 2015, basePrice: 4000, power: 82 },
+        { name: 'Kia Rio', emoji: '🚘', year: 2018, basePrice: 6500, power: 123 },
+        { name: 'Hyundai Solaris', emoji: '🚖', year: 2019, basePrice: 7500, power: 123 },
+        { name: 'Toyota Camry', emoji: '🚗', year: 2020, basePrice: 15000, power: 200 },
+        { name: 'BMW 5 Series', emoji: '🏎️', year: 2021, basePrice: 28000, power: 249 },
+        { name: 'Mercedes E-Class', emoji: '🚙', year: 2022, basePrice: 35000, power: 299 },
+        { name: 'Audi A6', emoji: '🚘', year: 2021, basePrice: 30000, power: 245 },
+        { name: 'Porsche 911', emoji: '🏎️', year: 2023, basePrice: 75000, power: 450 },
+        { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670 },
+        { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640 },
+        { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
+    ];
+
+    let state = {
+        balance: 10000,
+        market: [],
+        garage: [],
+        activeTab: 'market'
+    };
+
+    function formatMoney(n) {
+        return '$' + n.toLocaleString('ru-RU');
+    }
+
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.className = 'toast show' + (isError ? ' error' : '');
+        setTimeout(() => toast.className = 'toast', 1800);
+    }
+
+    function generateMarket() {
+        state.market = [];
+        const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
+        for (let i = 0; i < 5; i++) {
+            const base = shuffled[i % shuffled.length];
+            const variance = 0.85 + Math.random() * 0.3;
+            const price = Math.round(base.basePrice * variance);
+            state.market.push({
+                id: Date.now() + i + Math.random(),
+                ...base,
+                price: price,
+                sellPrice: Math.round(price * 2) // Продажа в x2
+            });
+        }
+    }
+
+    function buyCar(id) {
+        const idx = state.market.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        const car = state.market[idx];
+
+        if (state.balance < car.price) {
+            showToast('❌ Недостаточно денег!', true);
+            return;
+        }
+
+        state.balance -= car.price;
+        state.garage.push(car);
+        state.market.splice(idx, 1);
+        showToast('✅ Куплено: ' + car.name);
+        render();
+    }
+
+    function sellCar(id) {
+        const idx = state.garage.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        const car = state.garage[idx];
+
+        state.balance += car.sellPrice;
+        state.garage.splice(idx, 1);
+        showToast('💰 Продано за ' + formatMoney(car.sellPrice));
+        render();
+    }
+
+    function switchTab(tab) {
+        state.activeTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+        
+        const tabs = document.querySelectorAll('.tab');
+        const navs = document.querySelectorAll('.nav-item');
+        
+        if (tab === 'market') {
+            tabs[0].classList.add('active');
+            navs[0].classList.add('active');
+        } else {
+            tabs[1].classList.add('active');
+            navs[1].classList.add('active');
+        }
+        
+        render();
+    }
+
+    function resetGame() {
+        state.balance = 10000;
+        state.garage = [];
+        generateMarket();
+        render();
+        showToast('🔄 Игра сброшена');
+    }
+
+    function render() {
+        document.getElementById('balance').textContent = formatMoney(state.balance);
+        const content = document.getElementById('content');
+
+        if (state.activeTab === 'market') {
+            if (state.market.length === 0) {
+                generateMarket();
+            }
+            content.innerHTML = `
+                <div class="section-title">Доступные автомобили на рынке</div>
+                ${state.market.map(car => renderMarketCar(car)).join('')}
+            `;
+        } else {
+            if (state.garage.length === 0) {
+                content.innerHTML = `
+                    <div class="empty">
+                        <div class="empty-icon">🚗</div>
+                        <div class="empty-text">У вас пока нет машин.<br>Купите авто на рынке!</div>
+                    </div>
+                `;
+            } else {
+                const totalProfit = state.garage.reduce((s, c) => s + c.sellPrice, 0);
+                content.innerHTML = `
+                    <div class="section-title">Ваш гараж (${state.garage.length}) · Стоимость: ${formatMoney(totalProfit)}</div>
+                    ${state.garage.map(car => renderGarageCar(car)).join('')}
+                `;
+            }
+        }
+    }
+
+    function renderMarketCar(car) {
+        const canBuy = state.balance >= car.price;
+        return `
+            <div class="car-card">
+                <div class="car-top">
+                    <div>
+                        <div class="car-emoji">${car.emoji}</div>
+                        <div class="car-name">${car.name}</div>
+                        <div class="car-year">${car.year} · ${car.power} л.с.</div>
+                    </div>
+                    <div>
+                        <div class="car-price">${formatMoney(car.price)}</div>
+                        <div class="car-price-label">Продажа: ${formatMoney(car.sellPrice)}</div>
+                    </div>
+                </div>
+                <button class="btn btn-buy" ${canBuy ? '' : 'disabled'} onclick="buyCar(${car.id})">
+                    ${canBuy ? '💰 Купить' : 'Недостаточно средств'}
+                </button>
+            </div>
+        `;
+    }
+
+    function renderGarageCar(car) {
+        return `
+            <div class="car-card owned">
+                <div class="car-top">
+                    <div>
+                        <div class="car-emoji">${car.emoji}</div>
+                        <div class="car-name">${car.name}</div>
+                        <div class="car-year">${car.year} · ${car.power} л.с.</div>
+                    </div>
+                    <div>
+                        <div class="car-price">${formatMoney(car.sellPrice)}</div>
+                        <div class="car-price-label">Прибыль: +${formatMoney(car.sellPrice - car.price)}</div>
+                    </div>
+                </div>
+                <button class="btn btn-sell" onclick="sellCar(${car.id})">
+                    💸 Продать за ${formatMoney(car.sellPrice)}
+                </button>
+            </div>
+        `;
+    }
+
+    // Часы
+    function updateClock() {
+        const now = new Date();
+        const h = now.getHours().toString().padStart(2, '0');
+        const m = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('clock').textContent = h + ':' + m;
+    }
+
+    // Инициализация
+    generateMarket();
+    render();
+    updateClock();
+    setInterval(updateClock, 60000);
+
+    // Обновление рынка каждые 30 секунд
+    setInterval(() => {
+        if (state.activeTab === 'market') {
+            generateMarket();
+            render();
+        }
+    }, 30000);
+</script>
+</body>
+</html>
