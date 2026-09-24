@@ -288,7 +288,7 @@
     .car-card.owned { border-color: #ffaa00; }
     .car-card.scooter {
         border: 1px solid #00e5ff;
-        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
     }
 
     .car-top {
@@ -305,13 +305,14 @@
     }
 
     .car-image {
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         object-fit: contain;
-        border-radius: 10px;
-        background: #0f0f1e;
+        border-radius: 12px;
+        background: #fff;
         padding: 4px;
-        filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+        filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
+        flex-shrink: 0;
     }
 
     .car-info {
@@ -591,15 +592,17 @@
         font-size: 14px;
         box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         margin-bottom: 12px;
+        justify-content: flex-start;
     }
 
     .admin-btn-img {
-        width: 30px;
-        height: 30px;
+        width: 36px;
+        height: 36px;
         object-fit: contain;
-        background: #0f0f1e;
-        border-radius: 6px;
+        background: #fff;
+        border-radius: 8px;
         padding: 2px;
+        flex-shrink: 0;
     }
 
     /* ===== TOAST ===== */
@@ -788,7 +791,8 @@
             <div class="admin-section">
                 <div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
                 <button class="admin-btn scooter-btn" onclick="giveKugoo()">
-                    🛴 Выдать Kugoo G2 (бесплатно)
+                    <img class="admin-btn-img" src="https://kugoo-russia.ru/image/cache/catalog/products/elektrosamokaty/kugoo-g2/kugoo-g2-1-500x500.jpg" alt="Kugoo G2" onerror="this.style.display='none'">
+                    <span>🛴 Выдать Kugoo G2 (бесплатно)</span>
                 </button>
             </div>
 
@@ -834,6 +838,9 @@
         { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
     ];
 
+    // Реальное фото Kugoo G2 (с официального сайта Kugoo Russia)
+    const KUGOO_IMAGE = 'https://kugoo-russia.ru/image/cache/catalog/products/elektrosamokaty/kugoo-g2/kugoo-g2-1-500x500.jpg';
+
     // Отдельный товар — Kugoo G2
     const KUGOO_SCOOTER = {
         name: 'Kugoo G2',
@@ -841,7 +848,7 @@
         year: 2024,
         basePrice: 55000,
         power: 0,
-        image: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?w=200&h=200&fit=crop&q=80',
+        image: KUGOO_IMAGE,
         isScooter: true
     };
 
@@ -885,7 +892,6 @@
 
     function generateMarket() {
         state.market = [];
-        // 4 случайные машины + шанс 50%, что появится Kugoo
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 4; i++) {
             const base = shuffled[i % shuffled.length];
@@ -905,7 +911,6 @@
             price: KUGOO_SCOOTER.basePrice,
             sellPrice: KUGOO_SCOOTER.basePrice * 2
         });
-        // Перемешать
         state.market.sort(() => Math.random() - 0.5);
     }
 
@@ -1061,7 +1066,6 @@
         render();
     }
 
-    /* ===== ВЫДАЧА KUGOO G2 ===== */
     function giveKugoo() {
         state.garage.push({
             id: Date.now() + Math.random(),
@@ -1072,7 +1076,6 @@
         showToast('🛴 Kugoo G2 выдан!', 'scooter');
     }
 
-    /* ===== АДМИН-СПИСОК МАШИН ===== */
     function renderAdminCars() {
         const list = document.getElementById('adminCarsList');
         list.innerHTML = CAR_MODELS.map((car, i) => `
