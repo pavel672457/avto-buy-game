@@ -307,10 +307,9 @@
     .car-image {
         width: 90px;
         height: 90px;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 12px;
-        background: #fff;
-        padding: 4px;
+        background: #0f0f1e;
         filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
         flex-shrink: 0;
     }
@@ -596,12 +595,11 @@
     }
 
     .admin-btn-img {
-        width: 36px;
-        height: 36px;
-        object-fit: contain;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
         background: #fff;
         border-radius: 8px;
-        padding: 2px;
         flex-shrink: 0;
     }
 
@@ -791,7 +789,7 @@
             <div class="admin-section">
                 <div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
                 <button class="admin-btn scooter-btn" onclick="giveKugoo()">
-                    <img class="admin-btn-img" src="https://kugoo-russia.ru/image/cache/catalog/products/elektrosamokaty/kugoo-g2/kugoo-g2-1-500x500.jpg" alt="Kugoo G2" onerror="this.style.display='none'">
+                    <img class="admin-btn-img" src="1.webp" alt="Kugoo G2" onerror="this.style.display='none'">
                     <span>🛴 Выдать Kugoo G2 (бесплатно)</span>
                 </button>
             </div>
@@ -838,8 +836,8 @@
         { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
     ];
 
-    // Реальное фото Kugoo G2 (с официального сайта Kugoo Russia)
-    const KUGOO_IMAGE = 'https://kugoo-russia.ru/image/cache/catalog/products/elektrosamokaty/kugoo-g2/kugoo-g2-1-500x500.jpg';
+    // Фото Kugoo G2 — загружено тобой в репозиторий как 1.webp
+    const KUGOO_IMAGE = '1.webp';
 
     // Отдельный товар — Kugoo G2
     const KUGOO_SCOOTER = {
