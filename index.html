@@ -60,7 +60,6 @@
         z-index: 100;
     }
 
-    /* ===== SCREENS ===== */
     .screen {
         position: absolute;
         top: 40px;
@@ -132,37 +131,14 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
-    .app-icon-img.autobuy {
-        background: linear-gradient(135deg, #00ff88, #00cc6a);
-    }
-
-    .app-icon-img.settings {
-        background: linear-gradient(135deg, #666, #444);
-    }
-
-    .app-icon-img.gallery {
-        background: linear-gradient(135deg, #ff6b9d, #c44569);
-    }
-
-    .app-icon-img.notes {
-        background: linear-gradient(135deg, #ffd93d, #f6c90e);
-    }
-
-    .app-icon-img.clock {
-        background: linear-gradient(135deg, #2c2c2c, #000);
-    }
-
-    .app-icon-img.calc {
-        background: linear-gradient(135deg, #ff8a00, #e52e71);
-    }
-
-    .app-icon-img.browser {
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
-    }
-
-    .app-icon-img.camera {
-        background: linear-gradient(135deg, #232526, #414345);
-    }
+    .app-icon-img.autobuy { background: linear-gradient(135deg, #00ff88, #00cc6a); }
+    .app-icon-img.settings { background: linear-gradient(135deg, #666, #444); }
+    .app-icon-img.gallery { background: linear-gradient(135deg, #ff6b9d, #c44569); }
+    .app-icon-img.notes { background: linear-gradient(135deg, #ffd93d, #f6c90e); }
+    .app-icon-img.clock { background: linear-gradient(135deg, #2c2c2c, #000); }
+    .app-icon-img.calc { background: linear-gradient(135deg, #ff8a00, #e52e71); }
+    .app-icon-img.browser { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .app-icon-img.camera { background: linear-gradient(135deg, #232526, #414345); }
 
     .app-icon-label {
         color: #fff;
@@ -210,9 +186,7 @@
         font-weight: 600;
     }
 
-    .back-btn:active {
-        opacity: 0.6;
-    }
+    .back-btn:active { opacity: 0.6; }
 
     .app-title {
         color: #fff;
@@ -248,9 +222,7 @@
         font-weight: 700;
     }
 
-    .logo-text span {
-        color: #00ff88;
-    }
+    .logo-text span { color: #00ff88; }
 
     .balance {
         background: linear-gradient(135deg, #1e1e3a, #2a2a4a);
@@ -318,24 +290,35 @@
         transition: all 0.3s;
     }
 
-    .car-card:hover {
-        border-color: #00ff88;
-    }
-
-    .car-card.owned {
-        border-color: #ffaa00;
-    }
+    .car-card:hover { border-color: #00ff88; }
+    .car-card.owned { border-color: #ffaa00; }
 
     .car-top {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         margin-bottom: 12px;
+        gap: 10px;
     }
 
     .car-emoji {
         font-size: 40px;
         filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+    }
+
+    .car-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 10px;
+        background: #0f0f1e;
+        padding: 4px;
+        filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+    }
+
+    .car-info {
+        flex: 1;
+        min-width: 0;
     }
 
     .car-name {
@@ -412,13 +395,9 @@
     }
 
     /* ===== SETTINGS APP ===== */
-    #settingsScreen {
-        background: #0f0f1e;
-    }
+    #settingsScreen { background: #0f0f1e; }
 
-    .settings-list {
-        padding: 10px 15px;
-    }
+    .settings-list { padding: 10px 15px; }
 
     .settings-item {
         display: flex;
@@ -432,9 +411,7 @@
         transition: background 0.2s;
     }
 
-    .settings-item:active {
-        background: #22223a;
-    }
+    .settings-item:active { background: #22223a; }
 
     .settings-item-icon {
         font-size: 22px;
@@ -459,9 +436,7 @@
         background: linear-gradient(135deg, #2a1a1a, #1a1a2e);
     }
 
-    .settings-item.admin .settings-item-text {
-        color: #ff6666;
-    }
+    .settings-item.admin .settings-item-text { color: #ff6666; }
 
     /* ===== MODAL ===== */
     .modal-overlay {
@@ -475,9 +450,7 @@
         padding: 20px;
     }
 
-    .modal-overlay.active {
-        display: flex;
-    }
+    .modal-overlay.active { display: flex; }
 
     .modal {
         background: #1a1a2e;
@@ -510,9 +483,7 @@
         outline: none;
     }
 
-    .modal-input:focus {
-        border-color: #00ff88;
-    }
+    .modal-input:focus { border-color: #00ff88; }
 
     .modal-btn {
         width: 100%;
@@ -528,11 +499,6 @@
     .modal-btn.primary {
         background: linear-gradient(135deg, #00ff88, #00cc6a);
         color: #0f0f1e;
-    }
-
-    .modal-btn.danger {
-        background: linear-gradient(135deg, #ff4444, #cc0000);
-        color: #fff;
     }
 
     .modal-btn.secondary {
@@ -574,9 +540,7 @@
         padding: 15px;
     }
 
-    .admin-section {
-        margin-bottom: 20px;
-    }
+    .admin-section { margin-bottom: 20px; }
 
     .admin-section-title {
         color: #ff6666;
@@ -604,9 +568,7 @@
         padding-left: 15px;
     }
 
-    .admin-btn:active {
-        transform: scale(0.98);
-    }
+    .admin-btn:active { transform: scale(0.98); }
 
     .admin-btn.cheat {
         background: linear-gradient(135deg, #00ff88, #00cc6a);
@@ -841,6 +803,15 @@
         { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670 },
         { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640 },
         { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
+        { 
+            name: 'Kugoo G2', 
+            emoji: '🛴', 
+            year: 2024, 
+            basePrice: 55000, 
+            power: 0,
+            image: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?w=200&h=200&fit=crop&q=80',
+            isScooter: true
+        },
     ];
 
     const ADMIN_PASSWORD = '1919';
@@ -852,7 +823,6 @@
         activeTab: 'market'
     };
 
-    /* ===== SCREEN MANAGEMENT ===== */
     function openApp(app) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         if (app === 'autobuy') {
@@ -871,7 +841,6 @@
         document.getElementById('homeScreen').classList.add('active');
     }
 
-    /* ===== MONEY ===== */
     function formatMoney(n) {
         return '$' + n.toLocaleString('ru-RU');
     }
@@ -883,13 +852,13 @@
         setTimeout(() => toast.className = 'toast', 1800);
     }
 
-    /* ===== MARKET ===== */
     function generateMarket() {
         state.market = [];
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 5; i++) {
             const base = shuffled[i % shuffled.length];
-            const variance = 0.85 + Math.random() * 0.3;
+            // Kugoo G2 всегда по фиксированной цене 55000
+            const variance = base.isScooter ? 1 : (0.85 + Math.random() * 0.3);
             const price = Math.round(base.basePrice * variance);
             state.market.push({
                 id: Date.now() + i + Math.random(),
@@ -962,15 +931,27 @@
         }
     }
 
+    function renderCarImage(car) {
+        if (car.image) {
+            return `<img class="car-image" src="${car.image}" alt="${car.name}" onerror="this.outerHTML='<div class=\\'car-emoji\\'>${car.emoji}</div>'">`;
+        }
+        return `<div class="car-emoji">${car.emoji}</div>`;
+    }
+
     function renderMarketCar(car) {
         const canBuy = state.balance >= car.price;
+        const stats = car.isScooter 
+            ? `${car.year} · Электросамокат` 
+            : `${car.year} · ${car.power} л.с.`;
         return `
             <div class="car-card">
                 <div class="car-top">
-                    <div>
-                        <div class="car-emoji">${car.emoji}</div>
-                        <div class="car-name">${car.name}</div>
-                        <div class="car-year">${car.year} · ${car.power} л.с.</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        ${renderCarImage(car)}
+                        <div class="car-info">
+                            <div class="car-name">${car.name}</div>
+                            <div class="car-year">${stats}</div>
+                        </div>
                     </div>
                     <div>
                         <div class="car-price">${formatMoney(car.price)}</div>
@@ -985,13 +966,18 @@
     }
 
     function renderGarageCar(car) {
+        const stats = car.isScooter 
+            ? `${car.year} · Электросамокат` 
+            : `${car.year} · ${car.power} л.с.`;
         return `
             <div class="car-card owned">
                 <div class="car-top">
-                    <div>
-                        <div class="car-emoji">${car.emoji}</div>
-                        <div class="car-name">${car.name}</div>
-                        <div class="car-year">${car.year} · ${car.power} л.с.</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        ${renderCarImage(car)}
+                        <div class="car-info">
+                            <div class="car-name">${car.name}</div>
+                            <div class="car-year">${stats}</div>
+                        </div>
                     </div>
                     <div>
                         <div class="car-price">${formatMoney(car.sellPrice)}</div>
@@ -1005,7 +991,6 @@
         `;
     }
 
-    /* ===== ADMIN PANEL ===== */
     function openPasswordModal() {
         document.getElementById('passwordModal').classList.add('active');
         document.getElementById('passwordInput').value = '';
@@ -1036,11 +1021,14 @@
 
     function renderAdminCars() {
         const list = document.getElementById('adminCarsList');
-        list.innerHTML = CAR_MODELS.map((car, i) => `
-            <button class="admin-btn cheat" onclick="giveCar(${i})">
-                ${car.emoji} ${car.name} (${car.year})
-            </button>
-        `).join('');
+        list.innerHTML = CAR_MODELS.map((car, i) => {
+            const extra = car.isScooter ? ' 🛴' : ` (${car.year})`;
+            return `
+                <button class="admin-btn cheat" onclick="giveCar(${i})">
+                    ${car.emoji} ${car.name}${extra}
+                </button>
+            `;
+        }).join('');
     }
 
     function giveCar(index) {
@@ -1072,7 +1060,6 @@
         }
     }
 
-    /* ===== CLOCK ===== */
     const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
     const DAYS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
@@ -1087,13 +1074,11 @@
             DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
     }
 
-    /* ===== INIT ===== */
     generateMarket();
     render();
     updateClock();
     setInterval(updateClock, 10000);
 
-    // Обновление рынка каждые 30 сек
     setInterval(() => {
         if (state.activeTab === 'market' && document.getElementById('autobuyScreen').classList.contains('active')) {
             generateMarket();
@@ -1101,7 +1086,6 @@
         }
     }, 30000);
 
-    // Enter в поле пароля
     document.getElementById('passwordInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkPassword();
     });
