@@ -71,9 +71,7 @@
         overflow: hidden;
     }
 
-    .screen.active {
-        display: flex;
-    }
+    .screen.active { display: flex; }
 
     /* ===== HOME SCREEN ===== */
     #homeScreen {
@@ -116,9 +114,7 @@
         transition: transform 0.2s;
     }
 
-    .app-icon:active {
-        transform: scale(0.9);
-    }
+    .app-icon:active { transform: scale(0.9); }
 
     .app-icon-img {
         width: 60px;
@@ -195,9 +191,7 @@
     }
 
     /* ===== AUTOBUY APP ===== */
-    #autobuyScreen {
-        background: #0f0f1e;
-    }
+    #autobuyScreen { background: #0f0f1e; }
 
     .app-logo {
         display: flex;
@@ -292,6 +286,10 @@
 
     .car-card:hover { border-color: #00ff88; }
     .car-card.owned { border-color: #ffaa00; }
+    .car-card.scooter {
+        border: 1px solid #00e5ff;
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    }
 
     .car-top {
         display: flex;
@@ -566,6 +564,9 @@
         border: 1px solid #3a3a5a;
         text-align: left;
         padding-left: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .admin-btn:active { transform: scale(0.98); }
@@ -580,6 +581,25 @@
         background: linear-gradient(135deg, #ff4444, #cc0000);
         color: #fff;
         border: none;
+    }
+
+    .admin-btn.scooter-btn {
+        background: linear-gradient(135deg, #00e5ff, #0099cc);
+        color: #0f0f1e;
+        border: none;
+        padding: 15px;
+        font-size: 14px;
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        margin-bottom: 12px;
+    }
+
+    .admin-btn-img {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        background: #0f0f1e;
+        border-radius: 6px;
+        padding: 2px;
     }
 
     /* ===== TOAST ===== */
@@ -609,6 +629,7 @@
 
     .toast.error { background: #ff4444; color: #fff; }
     .toast.admin { background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; }
+    .toast.scooter { background: linear-gradient(135deg, #00e5ff, #0099cc); color: #0f0f1e; }
 </style>
 </head>
 <body>
@@ -763,6 +784,14 @@
                 <button class="admin-btn cheat" onclick="addMoney(1000000)">+ $1 000 000</button>
             </div>
 
+            <!-- СПЕЦИАЛЬНЫЙ РАЗДЕЛ ДЛЯ KUGOO G2 -->
+            <div class="admin-section">
+                <div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
+                <button class="admin-btn scooter-btn" onclick="giveKugoo()">
+                    🛴 Выдать Kugoo G2 (бесплатно)
+                </button>
+            </div>
+
             <div class="admin-section">
                 <div class="admin-section-title">🚗 Выдать машину бесплатно</div>
                 <div id="adminCarsList"></div>
@@ -803,16 +832,18 @@
         { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670 },
         { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640 },
         { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
-        { 
-            name: 'Kugoo G2', 
-            emoji: '🛴', 
-            year: 2024, 
-            basePrice: 55000, 
-            power: 0,
-            image: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?w=200&h=200&fit=crop&q=80',
-            isScooter: true
-        },
     ];
+
+    // Отдельный товар — Kugoo G2
+    const KUGOO_SCOOTER = {
+        name: 'Kugoo G2',
+        emoji: '🛴',
+        year: 2024,
+        basePrice: 55000,
+        power: 0,
+        image: 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?w=200&h=200&fit=crop&q=80',
+        isScooter: true
+    };
 
     const ADMIN_PASSWORD = '1919';
 
@@ -854,11 +885,11 @@
 
     function generateMarket() {
         state.market = [];
+        // 4 случайные машины + шанс 50%, что появится Kugoo
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
             const base = shuffled[i % shuffled.length];
-            // Kugoo G2 всегда по фиксированной цене 55000
-            const variance = base.isScooter ? 1 : (0.85 + Math.random() * 0.3);
+            const variance = 0.85 + Math.random() * 0.3;
             const price = Math.round(base.basePrice * variance);
             state.market.push({
                 id: Date.now() + i + Math.random(),
@@ -867,6 +898,15 @@
                 sellPrice: Math.round(price * 2)
             });
         }
+        // Kugoo всегда на рынке по 55 000
+        state.market.push({
+            id: Date.now() + 999 + Math.random(),
+            ...KUGOO_SCOOTER,
+            price: KUGOO_SCOOTER.basePrice,
+            sellPrice: KUGOO_SCOOTER.basePrice * 2
+        });
+        // Перемешать
+        state.market.sort(() => Math.random() - 0.5);
     }
 
     function buyCar(id) {
@@ -910,7 +950,7 @@
         if (state.activeTab === 'market') {
             if (state.market.length === 0) generateMarket();
             content.innerHTML = `
-                <div class="section-title">Доступные автомобили на рынке</div>
+                <div class="section-title">Доступные товары на рынке</div>
                 ${state.market.map(car => renderMarketCar(car)).join('')}
             `;
         } else {
@@ -943,13 +983,14 @@
         const stats = car.isScooter 
             ? `${car.year} · Электросамокат` 
             : `${car.year} · ${car.power} л.с.`;
+        const scooterClass = car.isScooter ? ' scooter' : '';
         return `
-            <div class="car-card">
+            <div class="car-card${scooterClass}">
                 <div class="car-top">
                     <div style="display: flex; gap: 10px; align-items: center;">
                         ${renderCarImage(car)}
                         <div class="car-info">
-                            <div class="car-name">${car.name}</div>
+                            <div class="car-name">${car.name}${car.isScooter ? ' 🛴' : ''}</div>
                             <div class="car-year">${stats}</div>
                         </div>
                     </div>
@@ -969,13 +1010,14 @@
         const stats = car.isScooter 
             ? `${car.year} · Электросамокат` 
             : `${car.year} · ${car.power} л.с.`;
+        const scooterClass = car.isScooter ? ' scooter' : '';
         return `
-            <div class="car-card owned">
+            <div class="car-card owned${scooterClass}">
                 <div class="car-top">
                     <div style="display: flex; gap: 10px; align-items: center;">
                         ${renderCarImage(car)}
                         <div class="car-info">
-                            <div class="car-name">${car.name}</div>
+                            <div class="car-name">${car.name}${car.isScooter ? ' 🛴' : ''}</div>
                             <div class="car-year">${stats}</div>
                         </div>
                     </div>
@@ -1019,16 +1061,25 @@
         render();
     }
 
+    /* ===== ВЫДАЧА KUGOO G2 ===== */
+    function giveKugoo() {
+        state.garage.push({
+            id: Date.now() + Math.random(),
+            ...KUGOO_SCOOTER,
+            price: KUGOO_SCOOTER.basePrice,
+            sellPrice: KUGOO_SCOOTER.basePrice * 2
+        });
+        showToast('🛴 Kugoo G2 выдан!', 'scooter');
+    }
+
+    /* ===== АДМИН-СПИСОК МАШИН ===== */
     function renderAdminCars() {
         const list = document.getElementById('adminCarsList');
-        list.innerHTML = CAR_MODELS.map((car, i) => {
-            const extra = car.isScooter ? ' 🛴' : ` (${car.year})`;
-            return `
-                <button class="admin-btn cheat" onclick="giveCar(${i})">
-                    ${car.emoji} ${car.name}${extra}
-                </button>
-            `;
-        }).join('');
+        list.innerHTML = CAR_MODELS.map((car, i) => `
+            <button class="admin-btn cheat" onclick="giveCar(${i})">
+                ${car.emoji} ${car.name} (${car.year})
+            </button>
+        `).join('');
     }
 
     function giveCar(index) {
