@@ -75,8 +75,30 @@
 
     /* ===== HOME SCREEN ===== */
     #homeScreen {
-        background: linear-gradient(160deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
         padding: 20px;
+        transition: background 0.4s;
+    }
+
+    /* Цвета обоев */
+    #homeScreen.wallpaper-green {
+        background: linear-gradient(160deg, #0a2a1a 0%, #0d3a24 50%, #061a10 100%);
+    }
+    #homeScreen.wallpaper-blue {
+        background: linear-gradient(160deg, #0a1a2a 0%, #0d2440 50%, #061020 100%);
+    }
+    #homeScreen.wallpaper-black {
+        background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #000 100%);
+    }
+
+    /* Светлая тема — обои становятся ярче */
+    body.light-theme #homeScreen.wallpaper-green {
+        background: linear-gradient(160deg, #00c853 0%, #00e676 50%, #00a843 100%);
+    }
+    body.light-theme #homeScreen.wallpaper-blue {
+        background: linear-gradient(160deg, #2979ff 0%, #5393ff 50%, #1c5fd6 100%);
+    }
+    body.light-theme #homeScreen.wallpaper-black {
+        background: linear-gradient(160deg, #bdbdbd 0%, #e0e0e0 50%, #9e9e9e 100%);
     }
 
     .home-header {
@@ -90,12 +112,14 @@
         font-weight: 200;
         letter-spacing: -2px;
         color: #fff;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
     .home-date {
         font-size: 14px;
-        color: #888;
+        color: rgba(255,255,255,0.8);
         margin-top: 5px;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.4);
     }
 
     .apps-grid {
@@ -141,6 +165,7 @@
         font-size: 11px;
         text-align: center;
         font-weight: 500;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6);
     }
 
     .dock {
@@ -157,6 +182,8 @@
         gap: 10px;
     }
 
+    body.light-theme .dock { background: rgba(0, 0, 0, 0.25); }
+
     .dock .app-icon-img {
         width: 55px;
         height: 55px;
@@ -170,6 +197,12 @@
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid #1e1e3a;
+        transition: all 0.3s;
+    }
+
+    body.light-theme .app-header {
+        background: #f5f5f7;
+        border-bottom: 1px solid #ddd;
     }
 
     .back-btn {
@@ -182,6 +215,8 @@
         font-weight: 600;
     }
 
+    body.light-theme .back-btn { color: #008c4a; }
+
     .back-btn:active { opacity: 0.6; }
 
     .app-title {
@@ -189,6 +224,8 @@
         font-size: 17px;
         font-weight: 700;
     }
+
+    body.light-theme .app-title { color: #111; }
 
     .header-btn {
         background: none;
@@ -200,10 +237,13 @@
         font-weight: 700;
     }
 
+    body.light-theme .header-btn { color: #008c4a; }
+
     .header-btn:active { opacity: 0.6; }
 
     /* ===== AUTOBUY APP ===== */
-    #autobuyScreen { background: #0f0f1e; }
+    #autobuyScreen { background: #0f0f1e; transition: background 0.3s; }
+    body.light-theme #autobuyScreen { background: #f5f5f7; }
 
     .app-logo {
         display: flex;
@@ -228,13 +268,21 @@
         font-weight: 700;
     }
 
+    body.light-theme .logo-text { color: #111; }
+
     .logo-text span { color: #00ff88; }
+    body.light-theme .logo-text span { color: #008c4a; }
 
     .balance {
         background: linear-gradient(135deg, #1e1e3a, #2a2a4a);
         padding: 8px 14px;
         border-radius: 12px;
         border: 1px solid #00ff88;
+    }
+
+    body.light-theme .balance {
+        background: #fff;
+        border: 1px solid #00aa55;
     }
 
     .balance-label {
@@ -244,11 +292,15 @@
         letter-spacing: 0.5px;
     }
 
+    body.light-theme .balance-label { color: #666; }
+
     .balance-value {
         color: #00ff88;
         font-size: 14px;
         font-weight: 700;
     }
+
+    body.light-theme .balance-value { color: #008c4a; }
 
     .tabs {
         display: flex;
@@ -256,6 +308,8 @@
         gap: 8px;
         border-bottom: 1px solid #1e1e3a;
     }
+
+    body.light-theme .tabs { border-bottom: 1px solid #ddd; }
 
     .tab {
         flex: 1;
@@ -270,9 +324,16 @@
         transition: all 0.3s;
     }
 
+    body.light-theme .tab { background: #e5e5ea; color: #555; }
+
     .tab.active {
         background: linear-gradient(135deg, #00ff88, #00cc6a);
         color: #0f0f1e;
+    }
+
+    body.light-theme .tab.active {
+        background: linear-gradient(135deg, #00cc6a, #00a050);
+        color: #fff;
     }
 
     .content {
@@ -286,6 +347,7 @@
     .content::-webkit-scrollbar { width: 4px; }
     .content::-webkit-scrollbar-track { background: #1a1a2e; }
     .content::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 2px; }
+    body.light-theme .content::-webkit-scrollbar-track { background: #f5f5f7; }
 
     .car-card {
         background: linear-gradient(135deg, #1a1a2e, #22223a);
@@ -294,6 +356,11 @@
         margin-bottom: 12px;
         border: 1px solid #2a2a4a;
         transition: all 0.3s;
+    }
+
+    body.light-theme .car-card {
+        background: #fff;
+        border: 1px solid #ddd;
     }
 
     .car-card:hover { border-color: #00ff88; }
@@ -326,10 +393,7 @@
         flex-shrink: 0;
     }
 
-    .car-info {
-        flex: 1;
-        min-width: 0;
-    }
+    .car-info { flex: 1; min-width: 0; }
 
     .car-name {
         color: #fff;
@@ -338,10 +402,9 @@
         margin-bottom: 3px;
     }
 
-    .car-year {
-        color: #666;
-        font-size: 11px;
-    }
+    body.light-theme .car-name { color: #111; }
+
+    .car-year { color: #666; font-size: 11px; }
 
     .car-price {
         color: #00ff88;
@@ -349,6 +412,8 @@
         font-weight: 700;
         text-align: right;
     }
+
+    body.light-theme .car-price { color: #008c4a; }
 
     .car-price-label {
         color: #666;
@@ -387,12 +452,7 @@
         color: #0f0f1e;
     }
 
-    .empty {
-        text-align: center;
-        padding: 60px 20px;
-        color: #555;
-    }
-
+    .empty { text-align: center; padding: 60px 20px; color: #555; }
     .empty-icon { font-size: 60px; margin-bottom: 15px; opacity: 0.5; }
     .empty-text { font-size: 14px; }
 
@@ -404,8 +464,11 @@
         padding-left: 4px;
     }
 
+    body.light-theme .section-title { color: #111; }
+
     /* ===== SETTINGS APP ===== */
-    #settingsScreen { background: #0f0f1e; }
+    #settingsScreen { background: #0f0f1e; transition: background 0.3s; }
+    body.light-theme #settingsScreen { background: #f5f5f7; }
 
     .settings-list { padding: 10px 15px; }
 
@@ -421,7 +484,10 @@
         transition: background 0.2s;
     }
 
+    body.light-theme .settings-item { background: #fff; }
+
     .settings-item:active { background: #22223a; }
+    body.light-theme .settings-item:active { background: #eee; }
 
     .settings-item-icon {
         font-size: 22px;
@@ -436,32 +502,187 @@
         font-weight: 500;
     }
 
-    .settings-item-arrow {
-        color: #555;
-        font-size: 18px;
-    }
+    body.light-theme .settings-item-text { color: #111; }
+
+    .settings-item-arrow { color: #555; font-size: 18px; }
 
     .settings-item.admin {
         border: 1px solid #ff4444;
         background: linear-gradient(135deg, #2a1a1a, #1a1a2e);
     }
 
-    .settings-item.admin .settings-item-text { color: #ff6666; }
-
-    /* ===== NOTES APP ===== */
-    #notesScreen { background: #0f0f1e; }
-
-    .notes-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 15px;
-        scrollbar-width: thin;
-        scrollbar-color: #ffd93d #1a1a2e;
+    body.light-theme .settings-item.admin {
+        background: linear-gradient(135deg, #ffe5e5, #fff);
     }
 
-    .notes-list::-webkit-scrollbar { width: 4px; }
-    .notes-list::-webkit-scrollbar-track { background: #1a1a2e; }
-    .notes-list::-webkit-scrollbar-thumb { background: #ffd93d; border-radius: 2px; }
+    .settings-item.admin .settings-item-text { color: #ff6666; }
+    body.light-theme .settings-item.admin .settings-item-text { color: #cc0000; }
+
+    /* ===== APPEARANCE (внутри настроек) ===== */
+    #appearanceScreen { background: #0f0f1e; transition: background 0.3s; }
+    body.light-theme #appearanceScreen { background: #f5f5f7; }
+
+    .appearance-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .appearance-section { margin-bottom: 25px; }
+
+    .appearance-section-title {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        padding-left: 4px;
+    }
+
+    body.light-theme .appearance-section-title { color: #333; }
+
+    /* === ТЕМА === */
+    .theme-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .theme-option {
+        padding: 20px 12px;
+        border-radius: 16px;
+        cursor: pointer;
+        text-align: center;
+        border: 3px solid transparent;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-option.dark {
+        background: linear-gradient(135deg, #1a1a2e, #0f0f1e);
+        border-color: #2a2a4a;
+    }
+
+    .theme-option.light {
+        background: linear-gradient(135deg, #fff, #e5e5ea);
+        border-color: #ddd;
+    }
+
+    .theme-option:active { transform: scale(0.97); }
+
+    .theme-option.active {
+        border-color: #00ff88;
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    }
+
+    .theme-option-icon { font-size: 36px; margin-bottom: 8px; }
+
+    .theme-option-label { font-size: 14px; font-weight: 700; }
+    .theme-option.dark .theme-option-label { color: #fff; }
+    .theme-option.light .theme-option-label { color: #111; }
+
+    .theme-check {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        background: #00ff88;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #0f0f1e;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .theme-option.active .theme-check { display: flex; }
+
+    /* === ОБОИ === */
+    .wallpaper-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .wallpaper-option {
+        aspect-ratio: 1;
+        border-radius: 16px;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 8px;
+    }
+
+    .wallpaper-option:active { transform: scale(0.95); }
+
+    .wallpaper-option.active {
+        border-color: #00ff88;
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    }
+
+    .wallpaper-option.green {
+        background: linear-gradient(160deg, #0a2a1a 0%, #0d3a24 50%, #061a10 100%);
+    }
+
+    .wallpaper-option.blue {
+        background: linear-gradient(160deg, #0a1a2a 0%, #0d2440 50%, #061020 100%);
+    }
+
+    .wallpaper-option.black {
+        background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #000 100%);
+    }
+
+    .wallpaper-check {
+        width: 22px;
+        height: 22px;
+        background: #00ff88;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        color: #0f0f1e;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .wallpaper-option.active .wallpaper-check { display: flex; }
+
+    .wallpaper-label {
+        position: absolute;
+        top: 8px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .appearance-hint {
+        color: #666;
+        font-size: 12px;
+        text-align: center;
+        margin-top: 20px;
+        line-height: 1.5;
+    }
+
+    body.light-theme .appearance-hint { color: #888; }
+
+    /* ===== NOTES APP ===== */
+    #notesScreen { background: #0f0f1e; transition: background 0.3s; }
+    body.light-theme #notesScreen { background: #f5f5f7; }
+
+    .notes-list { flex: 1; overflow-y: auto; padding: 15px; }
 
     .note-card {
         background: linear-gradient(135deg, #2a2a1a, #1a1a0e);
@@ -472,6 +693,11 @@
         cursor: pointer;
         transition: all 0.2s;
         position: relative;
+    }
+
+    body.light-theme .note-card {
+        background: #fff8dc;
+        border-left: 4px solid #f6c90e;
     }
 
     .note-card:active { transform: scale(0.98); }
@@ -485,6 +711,8 @@
         word-break: break-word;
     }
 
+    body.light-theme .note-title { color: #111; }
+
     .note-preview {
         color: #999;
         font-size: 12px;
@@ -494,11 +722,9 @@
         word-break: break-word;
     }
 
-    .note-date {
-        color: #666;
-        font-size: 10px;
-        margin-top: 8px;
-    }
+    body.light-theme .note-preview { color: #666; }
+
+    .note-date { color: #666; font-size: 10px; margin-top: 8px; }
 
     .note-delete {
         position: absolute;
@@ -519,17 +745,14 @@
 
     .note-delete:active { background: rgba(255, 68, 68, 0.35); }
 
-    .notes-empty {
-        text-align: center;
-        padding: 80px 20px;
-        color: #555;
-    }
-
+    .notes-empty { text-align: center; padding: 80px 20px; color: #555; }
+    body.light-theme .notes-empty { color: #999; }
     .notes-empty-icon { font-size: 70px; margin-bottom: 15px; opacity: 0.4; }
     .notes-empty-text { font-size: 14px; line-height: 1.5; }
 
     /* ===== NOTE EDITOR ===== */
-    #noteEditorScreen { background: #0f0f1e; }
+    #noteEditorScreen { background: #0f0f1e; transition: background 0.3s; }
+    body.light-theme #noteEditorScreen { background: #f5f5f7; }
 
     .note-editor {
         flex: 1;
@@ -553,6 +776,12 @@
         font-family: inherit;
     }
 
+    body.light-theme .note-input-title {
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #111;
+    }
+
     .note-input-title:focus { border-color: #ffd93d; }
     .note-input-title::placeholder { color: #555; }
 
@@ -570,6 +799,12 @@
         font-family: inherit;
         line-height: 1.5;
         margin-bottom: 10px;
+    }
+
+    body.light-theme .note-input-body {
+        background: #fff;
+        border: 1px solid #ddd;
+        color: #111;
     }
 
     .note-input-body:focus { border-color: #ffd93d; }
@@ -615,6 +850,11 @@
         border: 1px solid #2a2a4a;
     }
 
+    body.light-theme .modal {
+        background: #fff;
+        border: 1px solid #ddd;
+    }
+
     .modal-title {
         color: #fff;
         font-size: 18px;
@@ -622,6 +862,8 @@
         margin-bottom: 20px;
         text-align: center;
     }
+
+    body.light-theme .modal-title { color: #111; }
 
     .modal-input {
         width: 100%;
@@ -635,6 +877,12 @@
         letter-spacing: 8px;
         margin-bottom: 15px;
         outline: none;
+    }
+
+    body.light-theme .modal-input {
+        background: #f5f5f7;
+        border: 2px solid #ddd;
+        color: #111;
     }
 
     .modal-input:focus { border-color: #00ff88; }
@@ -660,9 +908,19 @@
         color: #fff;
     }
 
+    body.light-theme .modal-btn.secondary {
+        background: #e5e5ea;
+        color: #111;
+    }
+
     /* ===== ADMIN PANEL ===== */
     #adminScreen {
         background: linear-gradient(160deg, #1a0000, #0f0f1e);
+        transition: background 0.3s;
+    }
+
+    body.light-theme #adminScreen {
+        background: linear-gradient(160deg, #ffe5e5, #f5f5f7);
     }
 
     .admin-header {
@@ -673,11 +931,7 @@
         align-items: center;
     }
 
-    .admin-title {
-        color: #fff;
-        font-size: 16px;
-        font-weight: 700;
-    }
+    .admin-title { color: #fff; font-size: 16px; font-weight: 700; }
 
     .admin-badge {
         background: rgba(255, 255, 255, 0.2);
@@ -688,12 +942,7 @@
         font-weight: 700;
     }
 
-    .admin-content {
-        flex: 1;
-        overflow-y: auto;
-        padding: 15px;
-    }
-
+    .admin-content { flex: 1; overflow-y: auto; padding: 15px; }
     .admin-section { margin-bottom: 20px; }
 
     .admin-section-title {
@@ -909,7 +1158,7 @@
                 <div class="settings-item-text">Батарея</div>
                 <div class="settings-item-arrow">›</div>
             </div>
-            <div class="settings-item">
+            <div class="settings-item" onclick="openApp('appearance')">
                 <div class="settings-item-icon">🎨</div>
                 <div class="settings-item-text">Обои и тема</div>
                 <div class="settings-item-arrow">›</div>
@@ -923,6 +1172,57 @@
                 <div class="settings-item-icon">👑</div>
                 <div class="settings-item-text">Админ-панель</div>
                 <div class="settings-item-arrow">›</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== APPEARANCE (открывается из настроек) ===== -->
+    <div class="screen" id="appearanceScreen">
+        <div class="app-header">
+            <button class="back-btn" onclick="openApp('settings')">←</button>
+            <div class="app-title">🎨 Обои и тема</div>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="appearance-content">
+            <!-- ТЕМА -->
+            <div class="appearance-section">
+                <div class="appearance-section-title">🌗 Тема оформления</div>
+                <div class="theme-options">
+                    <div class="theme-option dark" id="themeDark" onclick="setTheme('dark')">
+                        <div class="theme-check">✓</div>
+                        <div class="theme-option-icon">🌙</div>
+                        <div class="theme-option-label">Тёмная</div>
+                    </div>
+                    <div class="theme-option light" id="themeLight" onclick="setTheme('light')">
+                        <div class="theme-check">✓</div>
+                        <div class="theme-option-icon">☀️</div>
+                        <div class="theme-option-label">Светлая</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ОБОИ -->
+            <div class="appearance-section">
+                <div class="appearance-section-title">🖼️ Цвет обоев</div>
+                <div class="wallpaper-options">
+                    <div class="wallpaper-option green" id="wpGreen" onclick="setWallpaper('green')">
+                        <div class="wallpaper-label">Зелёный</div>
+                        <div class="wallpaper-check">✓</div>
+                    </div>
+                    <div class="wallpaper-option blue" id="wpBlue" onclick="setWallpaper('blue')">
+                        <div class="wallpaper-label">Синий</div>
+                        <div class="wallpaper-check">✓</div>
+                    </div>
+                    <div class="wallpaper-option black" id="wpBlack" onclick="setWallpaper('black')">
+                        <div class="wallpaper-label">Чёрный</div>
+                        <div class="wallpaper-check">✓</div>
+                    </div>
+                </div>
+                <div class="appearance-hint">
+                    Настройки применяются ко всей системе<br>
+                    и сохраняются автоматически
+                </div>
             </div>
         </div>
     </div>
@@ -1031,6 +1331,7 @@
 
     const ADMIN_PASSWORD = '1919';
     const STORAGE_KEY = 'autobuy_save_v1';
+    const APPEARANCE_KEY = 'autobuy_appearance_v1';
 
     let state = {
         balance: 10000,
@@ -1039,13 +1340,76 @@
         activeTab: 'market'
     };
 
-    /* ===== NOTES STATE ===== */
+    let appearance = {
+        theme: 'dark',
+        wallpaper: 'green'
+    };
+
     let notes = [];
     let currentNoteId = null;
 
-    /* ==================== СОХРАНЕНИЕ / ЗАГРУЗКА ==================== */
+    /* ==================== ВНЕШНИЙ ВИД ==================== */
 
-    // Сохранить всю игру (деньги, гараж, рынок)
+    function loadAppearance() {
+        try {
+            const raw = localStorage.getItem(APPEARANCE_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            if (saved.theme === 'dark' || saved.theme === 'light') appearance.theme = saved.theme;
+            if (['green', 'blue', 'black'].includes(saved.wallpaper)) appearance.wallpaper = saved.wallpaper;
+        } catch (e) {}
+    }
+
+    function saveAppearance() {
+        try {
+            localStorage.setItem(APPEARANCE_KEY, JSON.stringify(appearance));
+        } catch (e) {}
+    }
+
+    function applyAppearance() {
+        if (appearance.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else {
+            document.body.classList.remove('light-theme');
+        }
+
+        const home = document.getElementById('homeScreen');
+        home.classList.remove('wallpaper-green', 'wallpaper-blue', 'wallpaper-black');
+        home.classList.add('wallpaper-' + appearance.wallpaper);
+
+        // Обновить UI в настройках
+        const tDark = document.getElementById('themeDark');
+        const tLight = document.getElementById('themeLight');
+        const wpG = document.getElementById('wpGreen');
+        const wpB = document.getElementById('wpBlue');
+        const wpK = document.getElementById('wpBlack');
+
+        if (tDark) tDark.classList.toggle('active', appearance.theme === 'dark');
+        if (tLight) tLight.classList.toggle('active', appearance.theme === 'light');
+        if (wpG) wpG.classList.toggle('active', appearance.wallpaper === 'green');
+        if (wpB) wpB.classList.toggle('active', appearance.wallpaper === 'blue');
+        if (wpK) wpK.classList.toggle('active', appearance.wallpaper === 'black');
+    }
+
+    function setTheme(theme) {
+        if (theme !== 'dark' && theme !== 'light') return;
+        appearance.theme = theme;
+        saveAppearance();
+        applyAppearance();
+        showToast(theme === 'dark' ? '🌙 Тёмная тема' : '☀️ Светлая тема', 'save');
+    }
+
+    function setWallpaper(color) {
+        if (!['green', 'blue', 'black'].includes(color)) return;
+        appearance.wallpaper = color;
+        saveAppearance();
+        applyAppearance();
+        const names = { green: '🟢 Зелёные обои', blue: '🔵 Синие обои', black: '⚫ Чёрные обои' };
+        showToast(names[color], 'save');
+    }
+
+    /* ==================== СОХРАНЕНИЕ ИГРЫ ==================== */
+
     function saveGame() {
         try {
             const save = {
@@ -1055,38 +1419,28 @@
                 savedAt: Date.now()
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
-        } catch (e) {
-            console.warn('Не удалось сохранить игру', e);
-        }
+        } catch (e) {}
     }
 
-    // Загрузить игру из localStorage
     function loadGame() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
             if (!raw) return false;
-
             const save = JSON.parse(raw);
             if (!save || typeof save !== 'object') return false;
-
             if (typeof save.balance === 'number') state.balance = save.balance;
             if (Array.isArray(save.garage)) state.garage = save.garage;
             if (Array.isArray(save.market) && save.market.length > 0) {
                 state.market = save.market;
             }
-
             return true;
         } catch (e) {
-            console.warn('Не удалось загрузить игру', e);
             return false;
         }
     }
 
-    // Сбросить сохранение
     function deleteSave() {
-        try {
-            localStorage.removeItem(STORAGE_KEY);
-        } catch (e) {}
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
     }
 
     /* ==================== ЗАМЕТКИ ==================== */
@@ -1094,20 +1448,16 @@
         try {
             const saved = localStorage.getItem('autobuy_notes');
             if (saved) notes = JSON.parse(saved);
-        } catch (e) {
-            notes = [];
-        }
+        } catch (e) { notes = []; }
     }
 
     function saveNotesToStorage() {
         try {
             localStorage.setItem('autobuy_notes', JSON.stringify(notes));
-        } catch (e) {
-            console.warn('Не удалось сохранить заметки');
-        }
+        } catch (e) {}
     }
 
-    /* ==================== SCREEN MANAGEMENT ==================== */
+    /* ==================== ЭКРАНЫ ==================== */
     function openApp(app) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         if (app === 'autobuy') {
@@ -1121,6 +1471,9 @@
         } else if (app === 'notes') {
             document.getElementById('notesScreen').classList.add('active');
             renderNotes();
+        } else if (app === 'appearance') {
+            document.getElementById('appearanceScreen').classList.add('active');
+            applyAppearance();
         }
     }
 
@@ -1140,7 +1493,7 @@
         setTimeout(() => toast.className = 'toast', 1800);
     }
 
-    /* ==================== NOTES FUNCTIONS ==================== */
+    /* ==================== ЗАМЕТКИ ==================== */
     function renderNotes() {
         const list = document.getElementById('notesList');
         if (notes.length === 0) {
@@ -1156,9 +1509,7 @@
             `;
             return;
         }
-
         const sorted = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
-
         list.innerHTML = sorted.map(note => {
             const title = note.title.trim() || 'Без названия';
             const preview = note.body.trim() 
@@ -1177,11 +1528,8 @@
 
     function escapeHtml(str) {
         return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
     function formatNoteDate(timestamp) {
@@ -1220,14 +1568,11 @@
     function saveNote() {
         const title = document.getElementById('noteTitle').value.trim();
         const body = document.getElementById('noteBody').value.trim();
-
         if (!title && !body) {
             showToast('❌ Заметка пустая', 'error');
             return;
         }
-
         const now = Date.now();
-
         if (currentNoteId) {
             const note = notes.find(n => n.id === currentNoteId);
             if (note) {
@@ -1237,16 +1582,9 @@
             }
             showToast('💾 Заметка обновлена', 'note');
         } else {
-            notes.push({
-                id: now,
-                title: title,
-                body: body,
-                createdAt: now,
-                updatedAt: now
-            });
+            notes.push({ id: now, title, body, createdAt: now, updatedAt: now });
             showToast('✨ Заметка создана', 'note');
         }
-
         saveNotesToStorage();
         openApp('notes');
     }
@@ -1259,7 +1597,7 @@
         renderNotes();
     }
 
-    /* ==================== MARKET ==================== */
+    /* ==================== РЫНОК ==================== */
     function generateMarket() {
         state.market = [];
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
@@ -1270,8 +1608,7 @@
             state.market.push({
                 id: Date.now() + i + Math.random(),
                 ...base,
-                price: price,
-                sellPrice: Math.round(price * 2)
+                price, sellPrice: Math.round(price * 2)
             });
         }
         state.market.push({
@@ -1322,7 +1659,6 @@
     function render() {
         document.getElementById('balance').textContent = formatMoney(state.balance);
         const content = document.getElementById('content');
-
         if (state.activeTab === 'market') {
             if (state.market.length === 0) generateMarket();
             content.innerHTML = `
@@ -1409,7 +1745,7 @@
         `;
     }
 
-    /* ==================== ADMIN ==================== */
+    /* ==================== АДМИНКА ==================== */
     function openPasswordModal() {
         document.getElementById('passwordModal').classList.add('active');
         document.getElementById('passwordInput').value = '';
@@ -1461,12 +1797,11 @@
 
     function giveCar(index) {
         const base = CAR_MODELS[index];
-        const price = base.basePrice;
         state.garage.push({
             id: Date.now() + Math.random(),
             ...base,
-            price: price,
-            sellPrice: Math.round(price * 2)
+            price: base.basePrice,
+            sellPrice: Math.round(base.basePrice * 2)
         });
         showToast('🎁 Выдано: ' + base.name, 'admin');
         saveGame();
@@ -1492,7 +1827,7 @@
         }
     }
 
-    /* ==================== CLOCK ==================== */
+    /* ==================== ЧАСЫ ==================== */
     const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
     const DAYS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
@@ -1507,10 +1842,11 @@
             DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
     }
 
-    /* ==================== INIT ==================== */
+    /* ==================== ИНИЦИАЛИЗАЦИЯ ==================== */
     loadNotes();
+    loadAppearance();
+    applyAppearance();
 
-    // Пытаемся загрузить сохранение. Если нет — генерируем новый рынок
     const loaded = loadGame();
     if (!loaded || state.market.length === 0) {
         generateMarket();
@@ -1520,7 +1856,6 @@
     updateClock();
     setInterval(updateClock, 10000);
 
-    // Обновление рынка каждые 30 сек (с сохранением)
     setInterval(() => {
         if (state.activeTab === 'market' && document.getElementById('autobuyScreen').classList.contains('active')) {
             generateMarket();
@@ -1529,10 +1864,7 @@
         }
     }, 30000);
 
-    // Автосохранение каждые 5 секунд (на всякий случай)
     setInterval(saveGame, 5000);
-
-    // Сохранить при закрытии страницы
     window.addEventListener('beforeunload', saveGame);
 
     document.getElementById('passwordInput').addEventListener('keypress', (e) => {
