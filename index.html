@@ -79,7 +79,6 @@
         transition: background 0.4s;
     }
 
-    /* Цвета обоев */
     #homeScreen.wallpaper-green {
         background: linear-gradient(160deg, #0a2a1a 0%, #0d3a24 50%, #061a10 100%);
     }
@@ -90,7 +89,6 @@
         background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #000 100%);
     }
 
-    /* Светлая тема — обои становятся ярче */
     body.light-theme #homeScreen.wallpaper-green {
         background: linear-gradient(160deg, #00c853 0%, #00e676 50%, #00a843 100%);
     }
@@ -369,6 +367,12 @@
         border: 1px solid #00e5ff;
         box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
     }
+    .car-card.german {
+        border-left: 4px solid #ffcc00;
+    }
+    .car-card.russian {
+        border-left: 4px solid #ff3333;
+    }
 
     .car-top {
         display: flex;
@@ -419,6 +423,40 @@
         color: #666;
         font-size: 10px;
         text-align: right;
+    }
+
+    .country-tag {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+        vertical-align: middle;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .country-tag.german {
+        background: rgba(255, 204, 0, 0.2);
+        color: #ffcc00;
+        border: 1px solid rgba(255, 204, 0, 0.4);
+    }
+
+    .country-tag.russian {
+        background: rgba(255, 51, 51, 0.2);
+        color: #ff5555;
+        border: 1px solid rgba(255, 51, 51, 0.4);
+    }
+
+    body.light-theme .country-tag.german {
+        background: rgba(255, 180, 0, 0.15);
+        color: #aa7700;
+    }
+
+    body.light-theme .country-tag.russian {
+        background: rgba(255, 51, 51, 0.15);
+        color: #cc0000;
     }
 
     .btn {
@@ -542,7 +580,6 @@
 
     body.light-theme .appearance-section-title { color: #333; }
 
-    /* === ТЕМА === */
     .theme-options {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -601,7 +638,6 @@
 
     .theme-option.active .theme-check { display: flex; }
 
-    /* === ОБОИ === */
     .wallpaper-options {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -982,6 +1018,18 @@
         border: none;
     }
 
+    .admin-btn.german {
+        background: linear-gradient(135deg, #ffcc00, #cc9900);
+        color: #0f0f1e;
+        border: none;
+    }
+
+    .admin-btn.russian {
+        background: linear-gradient(135deg, #ff5555, #cc0000);
+        color: #fff;
+        border: none;
+    }
+
     .admin-btn.danger {
         background: linear-gradient(135deg, #ff4444, #cc0000);
         color: #fff;
@@ -1038,6 +1086,8 @@
     .toast.scooter { background: linear-gradient(135deg, #00e5ff, #0099cc); color: #0f0f1e; }
     .toast.note { background: linear-gradient(135deg, #ffd93d, #f6c90e); color: #0f0f1e; }
     .toast.save { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
+    .toast.german { background: linear-gradient(135deg, #ffcc00, #cc9900); color: #0f0f1e; }
+    .toast.russian { background: linear-gradient(135deg, #ff5555, #cc0000); color: #fff; }
 </style>
 </head>
 <body>
@@ -1176,7 +1226,7 @@
         </div>
     </div>
 
-    <!-- ===== APPEARANCE (открывается из настроек) ===== -->
+    <!-- ===== APPEARANCE ===== -->
     <div class="screen" id="appearanceScreen">
         <div class="app-header">
             <button class="back-btn" onclick="openApp('settings')">←</button>
@@ -1185,7 +1235,6 @@
         </div>
 
         <div class="appearance-content">
-            <!-- ТЕМА -->
             <div class="appearance-section">
                 <div class="appearance-section-title">🌗 Тема оформления</div>
                 <div class="theme-options">
@@ -1202,7 +1251,6 @@
                 </div>
             </div>
 
-            <!-- ОБОИ -->
             <div class="appearance-section">
                 <div class="appearance-section-title">🖼️ Цвет обоев</div>
                 <div class="wallpaper-options">
@@ -1276,8 +1324,18 @@
             </div>
 
             <div class="admin-section">
-                <div class="admin-section-title">🚗 Выдать машину бесплатно</div>
-                <div id="adminCarsList"></div>
+                <div class="admin-section-title">🇩🇪 Немецкие машины</div>
+                <div id="adminGermanCars"></div>
+            </div>
+
+            <div class="admin-section">
+                <div class="admin-section-title">🇷🇺 Российские машины</div>
+                <div id="adminRussianCars"></div>
+            </div>
+
+            <div class="admin-section">
+                <div class="admin-section-title">🌍 Другие машины</div>
+                <div id="adminOtherCars"></div>
             </div>
 
             <div class="admin-section">
@@ -1303,18 +1361,62 @@
 
 <script>
     const CAR_MODELS = [
-        { name: 'Lada Priora', emoji: '🚗', year: 2012, basePrice: 2500, power: 98 },
-        { name: 'Renault Logan', emoji: '🚙', year: 2015, basePrice: 4000, power: 82 },
-        { name: 'Kia Rio', emoji: '🚘', year: 2018, basePrice: 6500, power: 123 },
-        { name: 'Hyundai Solaris', emoji: '🚖', year: 2019, basePrice: 7500, power: 123 },
-        { name: 'Toyota Camry', emoji: '🚗', year: 2020, basePrice: 15000, power: 200 },
-        { name: 'BMW 5 Series', emoji: '🏎️', year: 2021, basePrice: 28000, power: 249 },
-        { name: 'Mercedes E-Class', emoji: '🚙', year: 2022, basePrice: 35000, power: 299 },
-        { name: 'Audi A6', emoji: '🚘', year: 2021, basePrice: 30000, power: 245 },
-        { name: 'Porsche 911', emoji: '🏎️', year: 2023, basePrice: 75000, power: 450 },
-        { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670 },
-        { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640 },
-        { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
+        // ===== СТАРЫЕ МАШИНЫ (как было) =====
+        { name: 'Lada Priora', emoji: '🚗', year: 2012, basePrice: 2500, power: 98, country: 'other' },
+        { name: 'Renault Logan', emoji: '🚙', year: 2015, basePrice: 4000, power: 82, country: 'other' },
+        { name: 'Kia Rio', emoji: '🚘', year: 2018, basePrice: 6500, power: 123, country: 'other' },
+        { name: 'Hyundai Solaris', emoji: '🚖', year: 2019, basePrice: 7500, power: 123, country: 'other' },
+        { name: 'Toyota Camry', emoji: '🚗', year: 2020, basePrice: 15000, power: 200, country: 'other' },
+        { name: 'BMW 5 Series', emoji: '🏎️', year: 2021, basePrice: 28000, power: 249, country: 'german' },
+        { name: 'Mercedes E-Class', emoji: '🚙', year: 2022, basePrice: 35000, power: 299, country: 'german' },
+        { name: 'Audi A6', emoji: '🚘', year: 2021, basePrice: 30000, power: 245, country: 'german' },
+        { name: 'Porsche 911', emoji: '🏎️', year: 2023, basePrice: 75000, power: 450, country: 'german' },
+        { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670, country: 'other' },
+        { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640, country: 'other' },
+        { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670, country: 'other' },
+
+        // ===== НОВЫЕ: НЕМЕЦКИЕ =====
+        { name: 'Volkswagen Golf', emoji: '🚗', year: 2015, basePrice: 8000, power: 110, country: 'german' },
+        { name: 'Volkswagen Passat', emoji: '🚙', year: 2018, basePrice: 14000, power: 150, country: 'german' },
+        { name: 'BMW 3 Series', emoji: '🏎️', year: 2017, basePrice: 18000, power: 184, country: 'german' },
+        { name: 'BMW X5', emoji: '🚙', year: 2019, basePrice: 45000, power: 340, country: 'german' },
+        { name: 'BMW M5', emoji: '🏎️', year: 2022, basePrice: 95000, power: 600, country: 'german' },
+        { name: 'Mercedes C-Class', emoji: '🚘', year: 2018, basePrice: 22000, power: 184, country: 'german' },
+        { name: 'Mercedes S-Class', emoji: '🚙', year: 2021, basePrice: 85000, power: 435, country: 'german' },
+        { name: 'Mercedes G-Class', emoji: '🚙', year: 2022, basePrice: 130000, power: 585, country: 'german' },
+        { name: 'Audi A4', emoji: '🚘', year: 2017, basePrice: 16000, power: 150, country: 'german' },
+        { name: 'Audi Q7', emoji: '🚙', year: 2020, basePrice: 50000, power: 340, country: 'german' },
+        { name: 'Audi RS6', emoji: '🏎️', year: 2022, basePrice: 110000, power: 600, country: 'german' },
+        { name: 'Porsche Cayenne', emoji: '🚙', year: 2021, basePrice: 70000, power: 340, country: 'german' },
+        { name: 'Porsche Panamera', emoji: '🏎️', year: 2022, basePrice: 95000, power: 460, country: 'german' },
+        { name: 'Opel Astra', emoji: '🚗', year: 2014, basePrice: 5500, power: 115, country: 'german' },
+        { name: 'Opel Insignia', emoji: '🚙', year: 2017, basePrice: 10000, power: 165, country: 'german' },
+
+        // ===== НОВЫЕ: РОССИЙСКИЕ =====
+        { name: 'Lada Granta', emoji: '🚗', year: 2018, basePrice: 4500, power: 87, country: 'russian' },
+        { name: 'Lada Vesta', emoji: '🚗', year: 2020, basePrice: 7000, power: 106, country: 'russian' },
+        { name: 'Lada Niva Legend', emoji: '🚙', year: 2021, basePrice: 6000, power: 83, country: 'russian' },
+        { name: 'Lada 2107 (Классика)', emoji: '🚗', year: 2005, basePrice: 1500, power: 72, country: 'russian' },
+        { name: 'Lada 2110', emoji: '🚗', year: 2007, basePrice: 1800, power: 80, country: 'russian' },
+        { name: 'Lada Kalina', emoji: '🚗', year: 2010, basePrice: 2500, power: 98, country: 'russian' },
+        { name: 'Lada Largus', emoji: '🚙', year: 2015, basePrice: 5000, power: 106, country: 'russian' },
+        { name: 'Lada XRAY', emoji: '🚙', year: 2019, basePrice: 7500, power: 122, country: 'russian' },
+        { name: 'УАЗ Патриот', emoji: '🚙', year: 2020, basePrice: 12000, power: 150, country: 'russian' },
+        { name: 'УАЗ 469 (Буханка)', emoji: '🚙', year: 1990, basePrice: 2000, power: 92, country: 'russian' },
+        { name: 'ГАЗ Волга 3110', emoji: '🚗', year: 2003, basePrice: 2200, power: 130, country: 'russian' },
+        { name: 'ГАЗ Волга 21', emoji: '🚗', year: 1960, basePrice: 8000, power: 75, country: 'russian' },
+        { name: 'ГАЗ Газель', emoji: '🚐', year: 2012, basePrice: 6500, power: 107, country: 'russian' },
+        { name: 'ГАЗ Чайка', emoji: '🚗', year: 1965, basePrice: 35000, power: 195, country: 'russian' },
+        { name: 'Москвич 412', emoji: '🚗', year: 1975, basePrice: 3000, power: 75, country: 'russian' },
+        { name: 'Москвич 2141', emoji: '🚗', year: 1990, basePrice: 1500, power: 68, country: 'russian' },
+        { name: 'ЗАЗ Запорожец', emoji: '🚗', year: 1985, basePrice: 1200, power: 40, country: 'russian' },
+        { name: 'ВАЗ 2101 Копейка', emoji: '🚗', year: 1974, basePrice: 3500, power: 62, country: 'russian' },
+        { name: 'ВАЗ 2106', emoji: '🚗', year: 1980, basePrice: 2800, power: 75, country: 'russian' },
+        { name: 'ВАЗ 2109 (Девятка)', emoji: '🚗', year: 1995, basePrice: 1500, power: 70, country: 'russian' },
+        { name: 'ВАЗ 2114', emoji: '🚗', year: 2010, basePrice: 2500, power: 81, country: 'russian' },
+        { name: 'ВАЗ 2115', emoji: '🚗', year: 2012, basePrice: 2800, power: 81, country: 'russian' },
+        { name: 'Marussia B1', emoji: '🏎️', year: 2010, basePrice: 50000, power: 420, country: 'russian' },
+        { name: 'Aurus Senat', emoji: '🚙', year: 2021, basePrice: 180000, power: 598, country: 'russian' },
     ];
 
     const KUGOO_IMAGE = '1.webp';
@@ -1326,11 +1428,12 @@
         basePrice: 55000,
         power: 0,
         image: KUGOO_IMAGE,
-        isScooter: true
+        isScooter: true,
+        country: 'other'
     };
 
     const ADMIN_PASSWORD = '1919';
-    const STORAGE_KEY = 'autobuy_save_v1';
+    const STORAGE_KEY = 'autobuy_save_v2';
     const APPEARANCE_KEY = 'autobuy_appearance_v1';
 
     let state = {
@@ -1377,7 +1480,6 @@
         home.classList.remove('wallpaper-green', 'wallpaper-blue', 'wallpaper-black');
         home.classList.add('wallpaper-' + appearance.wallpaper);
 
-        // Обновить UI в настройках
         const tDark = document.getElementById('themeDark');
         const tLight = document.getElementById('themeLight');
         const wpG = document.getElementById('wpGreen');
@@ -1408,17 +1510,16 @@
         showToast(names[color], 'save');
     }
 
-    /* ==================== СОХРАНЕНИЕ ИГРЫ ==================== */
+    /* ==================== СОХРАНЕНИЕ ==================== */
 
     function saveGame() {
         try {
-            const save = {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 balance: state.balance,
                 market: state.market,
                 garage: state.garage,
                 savedAt: Date.now()
-            };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
+            }));
         } catch (e) {}
     }
 
@@ -1430,13 +1531,9 @@
             if (!save || typeof save !== 'object') return false;
             if (typeof save.balance === 'number') state.balance = save.balance;
             if (Array.isArray(save.garage)) state.garage = save.garage;
-            if (Array.isArray(save.market) && save.market.length > 0) {
-                state.market = save.market;
-            }
+            if (Array.isArray(save.market) && save.market.length > 0) state.market = save.market;
             return true;
-        } catch (e) {
-            return false;
-        }
+        } catch (e) { return false; }
     }
 
     function deleteSave() {
@@ -1452,9 +1549,7 @@
     }
 
     function saveNotesToStorage() {
-        try {
-            localStorage.setItem('autobuy_notes', JSON.stringify(notes));
-        } catch (e) {}
+        try { localStorage.setItem('autobuy_notes', JSON.stringify(notes)); } catch (e) {}
     }
 
     /* ==================== ЭКРАНЫ ==================== */
@@ -1600,9 +1695,10 @@
     /* ==================== РЫНОК ==================== */
     function generateMarket() {
         state.market = [];
+        // Перемешиваем все машины и берём 4 случайные
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
         for (let i = 0; i < 4; i++) {
-            const base = shuffled[i % shuffled.length];
+            const base = shuffled[i];
             const variance = 0.85 + Math.random() * 0.3;
             const price = Math.round(base.basePrice * variance);
             state.market.push({
@@ -1611,6 +1707,7 @@
                 price, sellPrice: Math.round(price * 2)
             });
         }
+        // Kugoo всегда на рынке
         state.market.push({
             id: Date.now() + 999 + Math.random(),
             ...KUGOO_SCOOTER,
@@ -1623,253 +1720,4 @@
     function buyCar(id) {
         const idx = state.market.findIndex(c => c.id === id);
         if (idx === -1) return;
-        const car = state.market[idx];
-        if (state.balance < car.price) {
-            showToast('❌ Недостаточно денег!', 'error');
-            return;
-        }
-        state.balance -= car.price;
-        state.garage.push(car);
-        state.market.splice(idx, 1);
-        showToast('✅ Куплено: ' + car.name);
-        saveGame();
-        render();
-    }
-
-    function sellCar(id) {
-        const idx = state.garage.findIndex(c => c.id === id);
-        if (idx === -1) return;
-        const car = state.garage[idx];
-        state.balance += car.sellPrice;
-        state.garage.splice(idx, 1);
-        showToast('💰 Продано за ' + formatMoney(car.sellPrice));
-        saveGame();
-        render();
-    }
-
-    function switchTab(tab) {
-        state.activeTab = tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        const tabs = document.querySelectorAll('.tab');
-        if (tab === 'market') tabs[0].classList.add('active');
-        else tabs[1].classList.add('active');
-        render();
-    }
-
-    function render() {
-        document.getElementById('balance').textContent = formatMoney(state.balance);
-        const content = document.getElementById('content');
-        if (state.activeTab === 'market') {
-            if (state.market.length === 0) generateMarket();
-            content.innerHTML = `
-                <div class="section-title">Доступные товары на рынке</div>
-                ${state.market.map(car => renderMarketCar(car)).join('')}
-            `;
-        } else {
-            if (state.garage.length === 0) {
-                content.innerHTML = `
-                    <div class="empty">
-                        <div class="empty-icon">🚗</div>
-                        <div class="empty-text">У вас пока нет машин.<br>Купите авто на рынке!</div>
-                    </div>
-                `;
-            } else {
-                const totalProfit = state.garage.reduce((s, c) => s + c.sellPrice, 0);
-                content.innerHTML = `
-                    <div class="section-title">Ваш гараж (${state.garage.length}) · Стоимость: ${formatMoney(totalProfit)}</div>
-                    ${state.garage.map(car => renderGarageCar(car)).join('')}
-                `;
-            }
-        }
-    }
-
-    function renderCarImage(car) {
-        if (car.image) {
-            return `<img class="car-image" src="${car.image}" alt="${car.name}" onerror="this.outerHTML='<div class=\\'car-emoji\\'>${car.emoji}</div>'">`;
-        }
-        return `<div class="car-emoji">${car.emoji}</div>`;
-    }
-
-    function renderMarketCar(car) {
-        const canBuy = state.balance >= car.price;
-        const stats = car.isScooter 
-            ? `${car.year} · Электросамокат` 
-            : `${car.year} · ${car.power} л.с.`;
-        const scooterClass = car.isScooter ? ' scooter' : '';
-        return `
-            <div class="car-card${scooterClass}">
-                <div class="car-top">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        ${renderCarImage(car)}
-                        <div class="car-info">
-                            <div class="car-name">${car.name}${car.isScooter ? ' 🛴' : ''}</div>
-                            <div class="car-year">${stats}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="car-price">${formatMoney(car.price)}</div>
-                        <div class="car-price-label">Продажа: ${formatMoney(car.sellPrice)}</div>
-                    </div>
-                </div>
-                <button class="btn btn-buy" ${canBuy ? '' : 'disabled'} onclick="buyCar(${car.id})">
-                    ${canBuy ? '💰 Купить' : 'Недостаточно средств'}
-                </button>
-            </div>
-        `;
-    }
-
-    function renderGarageCar(car) {
-        const stats = car.isScooter 
-            ? `${car.year} · Электросамокат` 
-            : `${car.year} · ${car.power} л.с.`;
-        const scooterClass = car.isScooter ? ' scooter' : '';
-        return `
-            <div class="car-card owned${scooterClass}">
-                <div class="car-top">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        ${renderCarImage(car)}
-                        <div class="car-info">
-                            <div class="car-name">${car.name}${car.isScooter ? ' 🛴' : ''}</div>
-                            <div class="car-year">${stats}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="car-price">${formatMoney(car.sellPrice)}</div>
-                        <div class="car-price-label">Прибыль: +${formatMoney(car.sellPrice - car.price)}</div>
-                    </div>
-                </div>
-                <button class="btn btn-sell" onclick="sellCar(${car.id})">
-                    💸 Продать за ${formatMoney(car.sellPrice)}
-                </button>
-            </div>
-        `;
-    }
-
-    /* ==================== АДМИНКА ==================== */
-    function openPasswordModal() {
-        document.getElementById('passwordModal').classList.add('active');
-        document.getElementById('passwordInput').value = '';
-        setTimeout(() => document.getElementById('passwordInput').focus(), 100);
-    }
-
-    function closePasswordModal() {
-        document.getElementById('passwordModal').classList.remove('active');
-    }
-
-    function checkPassword() {
-        const input = document.getElementById('passwordInput').value;
-        if (input === ADMIN_PASSWORD) {
-            closePasswordModal();
-            openApp('admin');
-            showToast('👑 Добро пожаловать, админ!', 'admin');
-        } else {
-            showToast('❌ Неверный пароль!', 'error');
-            document.getElementById('passwordInput').value = '';
-        }
-    }
-
-    function addMoney(amount) {
-        state.balance += amount;
-        showToast('💰 +' + formatMoney(amount), 'admin');
-        saveGame();
-        render();
-    }
-
-    function giveKugoo() {
-        state.garage.push({
-            id: Date.now() + Math.random(),
-            ...KUGOO_SCOOTER,
-            price: KUGOO_SCOOTER.basePrice,
-            sellPrice: KUGOO_SCOOTER.basePrice * 2
-        });
-        showToast('🛴 Kugoo G2 выдан!', 'scooter');
-        saveGame();
-    }
-
-    function renderAdminCars() {
-        const list = document.getElementById('adminCarsList');
-        list.innerHTML = CAR_MODELS.map((car, i) => `
-            <button class="admin-btn cheat" onclick="giveCar(${i})">
-                ${car.emoji} ${car.name} (${car.year})
-            </button>
-        `).join('');
-    }
-
-    function giveCar(index) {
-        const base = CAR_MODELS[index];
-        state.garage.push({
-            id: Date.now() + Math.random(),
-            ...base,
-            price: base.basePrice,
-            sellPrice: Math.round(base.basePrice * 2)
-        });
-        showToast('🎁 Выдано: ' + base.name, 'admin');
-        saveGame();
-    }
-
-    function clearGarage() {
-        if (confirm('Очистить весь гараж?')) {
-            state.garage = [];
-            showToast('🗑 Гараж очищен', 'admin');
-            saveGame();
-        }
-    }
-
-    function resetAll() {
-        if (confirm('Полный сброс игры? Все машины и деньги пропадут!')) {
-            state.balance = 10000;
-            state.garage = [];
-            deleteSave();
-            generateMarket();
-            showToast('💥 Игра сброшена', 'admin');
-            saveGame();
-            render();
-        }
-    }
-
-    /* ==================== ЧАСЫ ==================== */
-    const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-    const DAYS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-
-    function updateClock() {
-        const now = new Date();
-        const h = now.getHours().toString().padStart(2, '0');
-        const m = now.getMinutes().toString().padStart(2, '0');
-        const time = h + ':' + m;
-        document.getElementById('clock').textContent = time;
-        document.getElementById('homeTime').textContent = time;
-        document.getElementById('homeDate').textContent = 
-            DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
-    }
-
-    /* ==================== ИНИЦИАЛИЗАЦИЯ ==================== */
-    loadNotes();
-    loadAppearance();
-    applyAppearance();
-
-    const loaded = loadGame();
-    if (!loaded || state.market.length === 0) {
-        generateMarket();
-    }
-
-    render();
-    updateClock();
-    setInterval(updateClock, 10000);
-
-    setInterval(() => {
-        if (state.activeTab === 'market' && document.getElementById('autobuyScreen').classList.contains('active')) {
-            generateMarket();
-            saveGame();
-            render();
-        }
-    }, 30000);
-
-    setInterval(saveGame, 5000);
-    window.addEventListener('beforeunload', saveGame);
-
-    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') checkPassword();
-    });
-</script>
-</body>
-</html>
+        const car = state.market[idx
