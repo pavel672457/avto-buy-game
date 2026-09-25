@@ -5,776 +5,751 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Phone OS - AutoBuy</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
-    body { background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
-    .phone { width: 375px; height: 780px; background: #0f0f1e; border-radius: 40px; border: 12px solid #000; position: relative; overflow: hidden; box-shadow: 0 0 60px rgba(0, 255, 136, 0.3); }
-    .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 25px; background: #000; border-radius: 0 0 20px 20px; z-index: 500; }
-    .status-bar { height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; color: #fff; font-size: 12px; font-weight: 600; padding-top: 10px; position: relative; z-index: 100; }
-    .screen { position: absolute; top: 40px; left: 0; right: 0; bottom: 0; display: none; flex-direction: column; overflow: hidden; }
-    .screen.active { display: flex; }
-    #homeScreen { padding: 20px; transition: background 0.4s; }
-    #homeScreen.wallpaper-green { background: linear-gradient(160deg, #0a2a1a 0%, #0d3a24 50%, #061a10 100%); }
-    #homeScreen.wallpaper-blue { background: linear-gradient(160deg, #0a1a2a 0%, #0d2440 50%, #061020 100%); }
-    #homeScreen.wallpaper-black { background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #000 100%); }
-    body.light-theme #homeScreen.wallpaper-green { background: linear-gradient(160deg, #00c853 0%, #00e676 50%, #00a843 100%); }
-    body.light-theme #homeScreen.wallpaper-blue { background: linear-gradient(160deg, #2979ff 0%, #5393ff 50%, #1c5fd6 100%); }
-    body.light-theme #homeScreen.wallpaper-black { background: linear-gradient(160deg, #bdbdbd 0%, #e0e0e0 50%, #9e9e9e 100%); }
-    .home-header { text-align: center; color: #fff; padding: 30px 0 40px; }
-    .home-time { font-size: 60px; font-weight: 200; letter-spacing: -2px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
-    .home-date { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 5px; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-    .apps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px 10px; padding: 10px; }
-    .app-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.2s; }
-    .app-icon:active { transform: scale(0.9); }
-    .app-icon-img { width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
-    .app-icon-img.autobuy { background: linear-gradient(135deg, #00ff88, #00cc6a); }
-    .app-icon-img.settings { background: linear-gradient(135deg, #666, #444); }
-    .app-icon-img.gallery { background: linear-gradient(135deg, #ff6b9d, #c44569); }
-    .app-icon-img.notes { background: linear-gradient(135deg, #ffd93d, #f6c90e); }
-    .app-icon-img.clock { background: linear-gradient(135deg, #2c2c2c, #000); }
-    .app-icon-img.calc { background: linear-gradient(135deg, #ff8a00, #e52e71); }
-    .app-icon-img.browser { background: linear-gradient(135deg, #4facfe, #00f2fe); }
-    .app-icon-img.camera { background: linear-gradient(135deg, #232526, #414345); }
-    .app-icon-label { color: #fff; font-size: 11px; text-align: center; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.6); }
-    .dock { position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-radius: 25px; padding: 12px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    body.light-theme .dock { background: rgba(0, 0, 0, 0.25); }
-    .dock .app-icon-img { width: 55px; height: 55px; margin: 0 auto; }
-    .app-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e1e3a; transition: all 0.3s; }
-    body.light-theme .app-header { background: #f5f5f7; border-bottom: 1px solid #ddd; }
-    .back-btn { background: none; border: none; color: #00ff88; font-size: 22px; cursor: pointer; padding: 5px 10px; font-weight: 600; }
-    body.light-theme .back-btn { color: #008c4a; }
-    .back-btn:active { opacity: 0.6; }
-    .app-title { color: #fff; font-size: 17px; font-weight: 700; }
-    body.light-theme .app-title { color: #111; }
-    .header-btn { background: none; border: none; color: #00ff88; font-size: 22px; cursor: pointer; padding: 5px 10px; font-weight: 700; }
-    body.light-theme .header-btn { color: #008c4a; }
-    .header-btn:active { opacity: 0.6; }
-    #autobuyScreen { background: #0f0f1e; transition: background 0.3s; }
-    body.light-theme #autobuyScreen { background: #f5f5f7; }
-    .app-logo { display: flex; align-items: center; gap: 8px; }
-    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #00ff88, #00cc6a); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .logo-text { color: #fff; font-size: 18px; font-weight: 700; }
-    body.light-theme .logo-text { color: #111; }
-    .logo-text span { color: #00ff88; }
-    body.light-theme .logo-text span { color: #008c4a; }
-    .balance { background: linear-gradient(135deg, #1e1e3a, #2a2a4a); padding: 8px 14px; border-radius: 12px; border: 1px solid #00ff88; }
-    body.light-theme .balance { background: #fff; border: 1px solid #00aa55; }
-    .balance-label { color: #888; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
-    body.light-theme .balance-label { color: #666; }
-    .balance-value { color: #00ff88; font-size: 14px; font-weight: 700; }
-    body.light-theme .balance-value { color: #008c4a; }
-    .tabs { display: flex; padding: 10px 15px; gap: 8px; border-bottom: 1px solid #1e1e3a; }
-    body.light-theme .tabs { border-bottom: 1px solid #ddd; }
-    .tab { flex: 1; padding: 10px; background: #1a1a2e; border: none; color: #888; font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
-    body.light-theme .tab { background: #e5e5ea; color: #555; }
-    .tab.active { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
-    body.light-theme .tab.active { background: linear-gradient(135deg, #00cc6a, #00a050); color: #fff; }
-    .content { flex: 1; overflow-y: auto; padding: 15px; scrollbar-width: thin; scrollbar-color: #00ff88 #1a1a2e; }
-    .content::-webkit-scrollbar { width: 4px; }
-    .content::-webkit-scrollbar-track { background: #1a1a2e; }
-    .content::-webkit-scrollbar-thumb { background: #00ff88; border-radius: 2px; }
-    body.light-theme .content::-webkit-scrollbar-track { background: #f5f5f7; }
-    .car-card { background: linear-gradient(135deg, #1a1a2e, #22223a); border-radius: 16px; padding: 15px; margin-bottom: 12px; border: 1px solid #2a2a4a; transition: all 0.3s; }
-    body.light-theme .car-card { background: #fff; border: 1px solid #ddd; }
-    .car-card:hover { border-color: #00ff88; }
-    .car-card.owned { border-color: #ffaa00; }
-    .car-card.scooter { border: 1px solid #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.25); }
-    .car-card.german { border-left: 4px solid #ffcc00; }
-    .car-card.russian { border-left: 4px solid #ff3333; }
-    .car-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
-    .car-emoji { font-size: 40px; filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3)); }
-    .car-image { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; background: #0f0f1e; filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4)); flex-shrink: 0; }
-    .car-info { flex: 1; min-width: 0; }
-    .car-name { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
-    body.light-theme .car-name { color: #111; }
-    .car-year { color: #666; font-size: 11px; }
-    .car-price { color: #00ff88; font-size: 18px; font-weight: 700; text-align: right; }
-    body.light-theme .car-price { color: #008c4a; }
-    .car-price-label { color: #666; font-size: 10px; text-align: right; }
-    .country-tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.5px; }
-    .country-tag.german { background: rgba(255, 204, 0, 0.2); color: #ffcc00; border: 1px solid rgba(255, 204, 0, 0.4); }
-    .country-tag.russian { background: rgba(255, 51, 51, 0.2); color: #ff5555; border: 1px solid rgba(255, 51, 51, 0.4); }
-    body.light-theme .country-tag.german { background: rgba(255, 180, 0, 0.15); color: #aa7700; }
-    body.light-theme .country-tag.russian { background: rgba(255, 51, 51, 0.15); color: #cc0000; }
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-    .btn:active { transform: scale(0.97); }
-    .btn-buy { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
-    .btn-buy:disabled { background: #333; color: #666; cursor: not-allowed; }
-    .btn-sell { background: linear-gradient(135deg, #ffaa00, #ff8800); color: #0f0f1e; }
-    .empty { text-align: center; padding: 60px 20px; color: #555; }
-    .empty-icon { font-size: 60px; margin-bottom: 15px; opacity: 0.5; }
-    .empty-text { font-size: 14px; }
-    .section-title { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 12px; padding-left: 4px; }
-    body.light-theme .section-title { color: #111; }
-    #settingsScreen { background: #0f0f1e; transition: background 0.3s; }
-    body.light-theme #settingsScreen { background: #f5f5f7; }
-    .settings-list { padding: 10px 15px; }
-    .settings-item { display: flex; align-items: center; gap: 15px; padding: 16px; background: #1a1a2e; border-radius: 12px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s; }
-    body.light-theme .settings-item { background: #fff; }
-    .settings-item:active { background: #22223a; }
-    body.light-theme .settings-item:active { background: #eee; }
-    .settings-item-icon { font-size: 22px; width: 30px; text-align: center; }
-    .settings-item-text { flex: 1; color: #fff; font-size: 15px; font-weight: 500; }
-    body.light-theme .settings-item-text { color: #111; }
-    .settings-item-arrow { color: #555; font-size: 18px; }
-    .settings-item.admin { border: 1px solid #ff4444; background: linear-gradient(135deg, #2a1a1a, #1a1a2e); }
-    body.light-theme .settings-item.admin { background: linear-gradient(135deg, #ffe5e5, #fff); }
-    .settings-item.admin .settings-item-text { color: #ff6666; }
-    body.light-theme .settings-item.admin .settings-item-text { color: #cc0000; }
-    #appearanceScreen { background: #0f0f1e; transition: background 0.3s; }
-    body.light-theme #appearanceScreen { background: #f5f5f7; }
-    .appearance-content { flex: 1; overflow-y: auto; padding: 20px; }
-    .appearance-section { margin-bottom: 25px; }
-    .appearance-section-title { color: #fff; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-left: 4px; }
-    body.light-theme .appearance-section-title { color: #333; }
-    .theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .theme-option { padding: 20px 12px; border-radius: 16px; cursor: pointer; text-align: center; border: 3px solid transparent; transition: all 0.3s; position: relative; overflow: hidden; }
-    .theme-option.dark { background: linear-gradient(135deg, #1a1a2e, #0f0f1e); border-color: #2a2a4a; }
-    .theme-option.light { background: linear-gradient(135deg, #fff, #e5e5ea); border-color: #ddd; }
-    .theme-option:active { transform: scale(0.97); }
-    .theme-option.active { border-color: #00ff88; box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
-    .theme-option-icon { font-size: 36px; margin-bottom: 8px; }
-    .theme-option-label { font-size: 14px; font-weight: 700; }
-    .theme-option.dark .theme-option-label { color: #fff; }
-    .theme-option.light .theme-option-label { color: #111; }
-    .theme-check { position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; background: #00ff88; border-radius: 50%; display: none; align-items: center; justify-content: center; color: #0f0f1e; font-size: 14px; font-weight: 700; }
-    .theme-option.active .theme-check { display: flex; }
-    .wallpaper-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .wallpaper-option { aspect-ratio: 1; border-radius: 16px; cursor: pointer; border: 3px solid transparent; transition: all 0.3s; position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
-    .wallpaper-option:active { transform: scale(0.95); }
-    .wallpaper-option.active { border-color: #00ff88; box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
-    .wallpaper-option.green { background: linear-gradient(160deg, #0a2a1a 0%, #0d3a24 50%, #061a10 100%); }
-    .wallpaper-option.blue { background: linear-gradient(160deg, #0a1a2a 0%, #0d2440 50%, #061020 100%); }
-    .wallpaper-option.black { background: linear-gradient(160deg, #000 0%, #0a0a0a 50%, #000 100%); }
-    .wallpaper-check { width: 22px; height: 22px; background: #00ff88; border-radius: 50%; display: none; align-items: center; justify-content: center; color: #0f0f1e; font-size: 13px; font-weight: 700; }
-    .wallpaper-option.active .wallpaper-check { display: flex; }
-    .wallpaper-label { position: absolute; top: 8px; left: 0; right: 0; text-align: center; color: #fff; font-size: 11px; font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
-    .appearance-hint { color: #666; font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.5; }
-    body.light-theme .appearance-hint { color: #888; }
-    #notesScreen { background: #0f0f1e; transition: background 0.3s; }
-    body.light-theme #notesScreen { background: #f5f5f7; }
-    .notes-list { flex: 1; overflow-y: auto; padding: 15px; }
-    .note-card { background: linear-gradient(135deg, #2a2a1a, #1a1a0e); border-radius: 14px; padding: 15px; margin-bottom: 10px; border-left: 4px solid #ffd93d; cursor: pointer; transition: all 0.2s; position: relative; }
-    body.light-theme .note-card { background: #fff8dc; border-left: 4px solid #f6c90e; }
-    .note-card:active { transform: scale(0.98); }
-    .note-title { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 5px; padding-right: 30px; word-break: break-word; }
-    body.light-theme .note-title { color: #111; }
-    .note-preview { color: #999; font-size: 12px; line-height: 1.4; max-height: 38px; overflow: hidden; word-break: break-word; }
-    body.light-theme .note-preview { color: #666; }
-    .note-date { color: #666; font-size: 10px; margin-top: 8px; }
-    .note-delete { position: absolute; top: 12px; right: 12px; background: rgba(255, 68, 68, 0.15); border: none; color: #ff4444; width: 26px; height: 26px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .note-delete:active { background: rgba(255, 68, 68, 0.35); }
-    .notes-empty { text-align: center; padding: 80px 20px; color: #555; }
-    body.light-theme .notes-empty { color: #999; }
-    .notes-empty-icon { font-size: 70px; margin-bottom: 15px; opacity: 0.4; }
-    .notes-empty-text { font-size: 14px; line-height: 1.5; }
-    #noteEditorScreen { background: #0f0f1e; transition: background 0.3s; }
-    body.light-theme #noteEditorScreen { background: #f5f5f7; }
-    .note-editor { flex: 1; display: flex; flex-direction: column; padding: 15px; overflow: hidden; }
-    .note-input-title { width: 100%; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 14px; color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 10px; outline: none; font-family: inherit; }
-    body.light-theme .note-input-title { background: #fff; border: 1px solid #ddd; color: #111; }
-    .note-input-title:focus { border-color: #ffd93d; }
-    .note-input-title::placeholder { color: #555; }
-    .note-input-body { flex: 1; width: 100%; background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 14px; color: #fff; font-size: 14px; outline: none; resize: none; font-family: inherit; line-height: 1.5; margin-bottom: 10px; }
-    body.light-theme .note-input-body { background: #fff; border: 1px solid #ddd; color: #111; }
-    .note-input-body:focus { border-color: #ffd93d; }
-    .note-input-body::placeholder { color: #555; }
-    .note-save-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ffd93d, #f6c90e); border: none; border-radius: 12px; color: #0f0f1e; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-    .note-save-btn:active { transform: scale(0.97); }
-    .modal-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.85); display: none; align-items: center; justify-content: center; z-index: 400; padding: 20px; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: #1a1a2e; border-radius: 20px; padding: 25px; width: 100%; max-width: 320px; border: 1px solid #2a2a4a; }
-    body.light-theme .modal { background: #fff; border: 1px solid #ddd; }
-    .modal-title { color: #fff; font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-    body.light-theme .modal-title { color: #111; }
-    .modal-input { width: 100%; padding: 14px; background: #0f0f1e; border: 2px solid #2a2a4a; border-radius: 12px; color: #fff; font-size: 20px; text-align: center; letter-spacing: 8px; margin-bottom: 15px; outline: none; }
-    body.light-theme .modal-input { background: #f5f5f7; border: 2px solid #ddd; color: #111; }
-    .modal-input:focus { border-color: #00ff88; }
-    .modal-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
-    .modal-btn.primary { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
-    .modal-btn.secondary { background: #2a2a4a; color: #fff; }
-    body.light-theme .modal-btn.secondary { background: #e5e5ea; color: #111; }
-    #adminScreen { background: linear-gradient(160deg, #1a0000, #0f0f1e); transition: background 0.3s; }
-    body.light-theme #adminScreen { background: linear-gradient(160deg, #ffe5e5, #f5f5f7); }
-    .admin-header { background: linear-gradient(135deg, #ff4444, #cc0000); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .admin-title { color: #fff; font-size: 16px; font-weight: 700; }
-    .admin-badge { background: rgba(255, 255, 255, 0.2); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; }
-    .admin-content { flex: 1; overflow-y: auto; padding: 15px; }
-    .admin-section { margin-bottom: 20px; }
-    .admin-section-title { color: #ff6666; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-left: 4px; }
-    .admin-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; margin-bottom: 8px; background: linear-gradient(135deg, #2a2a4a, #1a1a2e); color: #fff; border: 1px solid #3a3a5a; text-align: left; padding-left: 15px; display: flex; align-items: center; gap: 10px; }
-    .admin-btn:active { transform: scale(0.98); }
-    .admin-btn.cheat { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; border: none; }
-    .admin-btn.german { background: linear-gradient(135deg, #ffcc00, #cc9900); color: #0f0f1e; border: none; }
-    .admin-btn.russian { background: linear-gradient(135deg, #ff5555, #cc0000); color: #fff; border: none; }
-    .admin-btn.danger { background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; border: none; }
-    .admin-btn.scooter-btn { background: linear-gradient(135deg, #00e5ff, #0099cc); color: #0f0f1e; border: none; padding: 15px; font-size: 14px; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); margin-bottom: 12px; justify-content: flex-start; }
-    .admin-btn-img { width: 40px; height: 40px; object-fit: cover; background: #fff; border-radius: 8px; flex-shrink: 0; }
-    .toast { position: absolute; top: 100px; left: 50%; transform: translateX(-50%) translateY(-20px); background: #00ff88; color: #0f0f1e; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 13px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 1000; max-width: 80%; text-align: center; }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.error { background: #ff4444; color: #fff; }
-    .toast.admin { background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; }
-    .toast.scooter { background: linear-gradient(135deg, #00e5ff, #0099cc); color: #0f0f1e; }
-    .toast.note { background: linear-gradient(135deg, #ffd93d, #f6c90e); color: #0f0f1e; }
-    .toast.save { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
-    .toast.german { background: linear-gradient(135deg, #ffcc00, #cc9900); color: #0f0f1e; }
-    .toast.russian { background: linear-gradient(135deg, #ff5555, #cc0000); color: #fff; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+body{background:#1a1a2e;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:10px}
+.phone{width:375px;height:780px;background:#0f0f1e;border-radius:40px;border:12px solid #000;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,255,136,.3)}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:150px;height:25px;background:#000;border-radius:0 0 20px 20px;z-index:500}
+.status-bar{height:40px;display:flex;justify-content:space-between;align-items:center;padding:0 25px;color:#fff;font-size:12px;font-weight:600;padding-top:10px;position:relative;z-index:100}
+.screen{position:absolute;top:40px;left:0;right:0;bottom:0;display:none;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+#homeScreen{padding:20px;transition:background .4s}
+#homeScreen.wallpaper-green{background:linear-gradient(160deg,#0a2a1a 0%,#0d3a24 50%,#061a10 100%)}
+#homeScreen.wallpaper-blue{background:linear-gradient(160deg,#0a1a2a 0%,#0d2440 50%,#061020 100%)}
+#homeScreen.wallpaper-black{background:linear-gradient(160deg,#000 0%,#0a0a0a 50%,#000 100%)}
+body.light-theme #homeScreen.wallpaper-green{background:linear-gradient(160deg,#00c853 0%,#00e676 50%,#00a843 100%)}
+body.light-theme #homeScreen.wallpaper-blue{background:linear-gradient(160deg,#2979ff 0%,#5393ff 50%,#1c5fd6 100%)}
+body.light-theme #homeScreen.wallpaper-black{background:linear-gradient(160deg,#bdbdbd 0%,#e0e0e0 50%,#9e9e9e 100%)}
+.home-header{text-align:center;color:#fff;padding:30px 0 40px}
+.home-time{font-size:60px;font-weight:200;letter-spacing:-2px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.home-date{font-size:14px;color:rgba(255,255,255,.8);margin-top:5px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.apps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;padding:10px}
+.app-icon{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform .2s}
+.app-icon:active{transform:scale(.9)}
+.app-icon-img{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.app-icon-img.autobuy{background:linear-gradient(135deg,#00ff88,#00cc6a)}
+.app-icon-img.settings{background:linear-gradient(135deg,#666,#444)}
+.app-icon-img.gallery{background:linear-gradient(135deg,#ff6b9d,#c44569)}
+.app-icon-img.notes{background:linear-gradient(135deg,#ffd93d,#f6c90e)}
+.app-icon-img.clock{background:linear-gradient(135deg,#2c2c2c,#000)}
+.app-icon-img.calc{background:linear-gradient(135deg,#ff8a00,#e52e71)}
+.app-icon-img.browser{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.app-icon-img.camera{background:linear-gradient(135deg,#232526,#414345)}
+.app-icon-label{color:#fff;font-size:11px;text-align:center;font-weight:500;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.dock{position:absolute;bottom:20px;left:20px;right:20px;background:rgba(255,255,255,.1);backdrop-filter:blur(20px);border-radius:25px;padding:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+body.light-theme .dock{background:rgba(0,0,0,.25)}
+.dock .app-icon-img{width:55px;height:55px;margin:0 auto}
+.app-header{padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e1e3a;transition:all .3s}
+body.light-theme .app-header{background:#f5f5f7;border-bottom:1px solid #ddd}
+.back-btn{background:none;border:none;color:#00ff88;font-size:22px;cursor:pointer;padding:5px 10px;font-weight:600}
+body.light-theme .back-btn{color:#008c4a}
+.back-btn:active{opacity:.6}
+.app-title{color:#fff;font-size:17px;font-weight:700}
+body.light-theme .app-title{color:#111}
+.header-btn{background:none;border:none;color:#00ff88;font-size:22px;cursor:pointer;padding:5px 10px;font-weight:700}
+body.light-theme .header-btn{color:#008c4a}
+#autobuyScreen{background:#0f0f1e;transition:background .3s}
+body.light-theme #autobuyScreen{background:#f5f5f7}
+.app-logo{display:flex;align-items:center;gap:8px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#00ff88,#00cc6a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{color:#fff;font-size:18px;font-weight:700}
+body.light-theme .logo-text{color:#111}
+.logo-text span{color:#00ff88}
+body.light-theme .logo-text span{color:#008c4a}
+.balance{background:linear-gradient(135deg,#1e1e3a,#2a2a4a);padding:8px 14px;border-radius:12px;border:1px solid #00ff88}
+body.light-theme .balance{background:#fff;border:1px solid #00aa55}
+.balance-label{color:#888;font-size:9px;text-transform:uppercase;letter-spacing:.5px}
+body.light-theme .balance-label{color:#666}
+.balance-value{color:#00ff88;font-size:14px;font-weight:700}
+body.light-theme .balance-value{color:#008c4a}
+.tabs{display:flex;padding:10px 15px;gap:8px;border-bottom:1px solid #1e1e3a}
+body.light-theme .tabs{border-bottom:1px solid #ddd}
+.tab{flex:1;padding:10px;background:#1a1a2e;border:none;color:#888;font-size:13px;font-weight:600;border-radius:10px;cursor:pointer;transition:all .3s}
+body.light-theme .tab{background:#e5e5ea;color:#555}
+.tab.active{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#0f0f1e}
+body.light-theme .tab.active{background:linear-gradient(135deg,#00cc6a,#00a050);color:#fff}
+.content{flex:1;overflow-y:auto;padding:15px;scrollbar-width:thin;scrollbar-color:#00ff88 #1a1a2e}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-track{background:#1a1a2e}
+.content::-webkit-scrollbar-thumb{background:#00ff88;border-radius:2px}
+.car-card{background:linear-gradient(135deg,#1a1a2e,#22223a);border-radius:16px;padding:15px;margin-bottom:12px;border:1px solid #2a2a4a;transition:all .3s}
+body.light-theme .car-card{background:#fff;border:1px solid #ddd}
+.car-card.owned{border-color:#ffaa00}
+.car-card.scooter{border:1px solid #00e5ff;box-shadow:0 0 15px rgba(0,229,255,.25)}
+.car-card.german{border-left:4px solid #ffcc00}
+.car-card.russian{border-left:4px solid #ff3333}
+.car-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px}
+.car-emoji{font-size:40px;filter:drop-shadow(0 0 10px rgba(0,255,136,.3))}
+.car-image{width:90px;height:90px;object-fit:cover;border-radius:12px;background:#0f0f1e;filter:drop-shadow(0 0 10px rgba(0,229,255,.4));flex-shrink:0}
+.car-info{flex:1;min-width:0}
+.car-name{color:#fff;font-size:16px;font-weight:700;margin-bottom:3px}
+body.light-theme .car-name{color:#111}
+.car-year{color:#666;font-size:11px}
+.car-price{color:#00ff88;font-size:18px;font-weight:700;text-align:right}
+body.light-theme .car-price{color:#008c4a}
+.car-price-label{color:#666;font-size:10px;text-align:right}
+.country-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;text-transform:uppercase;letter-spacing:.5px}
+.country-tag.german{background:rgba(255,204,0,.2);color:#ffcc00;border:1px solid rgba(255,204,0,.4)}
+.country-tag.russian{background:rgba(255,51,51,.2);color:#ff5555;border:1px solid rgba(255,51,51,.4)}
+body.light-theme .country-tag.german{background:rgba(255,180,0,.15);color:#aa7700}
+body.light-theme .country-tag.russian{background:rgba(255,51,51,.15);color:#cc0000}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+.btn:active{transform:scale(.97)}
+.btn-buy{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#0f0f1e}
+.btn-buy:disabled{background:#333;color:#666;cursor:not-allowed}
+.btn-sell{background:linear-gradient(135deg,#ffaa00,#ff8800);color:#0f0f1e}
+.empty{text-align:center;padding:60px 20px;color:#555}
+.empty-icon{font-size:60px;margin-bottom:15px;opacity:.5}
+.empty-text{font-size:14px}
+.section-title{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;padding-left:4px}
+body.light-theme .section-title{color:#111}
+#settingsScreen{background:#0f0f1e;transition:background .3s}
+body.light-theme #settingsScreen{background:#f5f5f7}
+.settings-list{padding:10px 15px}
+.settings-item{display:flex;align-items:center;gap:15px;padding:16px;background:#1a1a2e;border-radius:12px;margin-bottom:8px;cursor:pointer;transition:background .2s}
+body.light-theme .settings-item{background:#fff}
+.settings-item:active{background:#22223a}
+body.light-theme .settings-item:active{background:#eee}
+.settings-item-icon{font-size:22px;width:30px;text-align:center}
+.settings-item-text{flex:1;color:#fff;font-size:15px;font-weight:500}
+body.light-theme .settings-item-text{color:#111}
+.settings-item-arrow{color:#555;font-size:18px}
+.settings-item.admin{border:1px solid #ff4444;background:linear-gradient(135deg,#2a1a1a,#1a1a2e)}
+body.light-theme .settings-item.admin{background:linear-gradient(135deg,#ffe5e5,#fff)}
+.settings-item.admin .settings-item-text{color:#ff6666}
+body.light-theme .settings-item.admin .settings-item-text{color:#cc0000}
+#appearanceScreen{background:#0f0f1e;transition:background .3s}
+body.light-theme #appearanceScreen{background:#f5f5f7}
+.appearance-content{flex:1;overflow-y:auto;padding:20px}
+.appearance-section{margin-bottom:25px}
+.appearance-section-title{color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-left:4px}
+body.light-theme .appearance-section-title{color:#333}
+.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.theme-option{padding:20px 12px;border-radius:16px;cursor:pointer;text-align:center;border:3px solid transparent;transition:all .3s;position:relative;overflow:hidden}
+.theme-option.dark{background:linear-gradient(135deg,#1a1a2e,#0f0f1e);border-color:#2a2a4a}
+.theme-option.light{background:linear-gradient(135deg,#fff,#e5e5ea);border-color:#ddd}
+.theme-option:active{transform:scale(.97)}
+.theme-option.active{border-color:#00ff88;box-shadow:0 0 20px rgba(0,255,136,.4)}
+.theme-option-icon{font-size:36px;margin-bottom:8px}
+.theme-option-label{font-size:14px;font-weight:700}
+.theme-option.dark .theme-option-label{color:#fff}
+.theme-option.light .theme-option-label{color:#111}
+.theme-check{position:absolute;top:10px;right:10px;width:24px;height:24px;background:#00ff88;border-radius:50%;display:none;align-items:center;justify-content:center;color:#0f0f1e;font-size:14px;font-weight:700}
+.theme-option.active .theme-check{display:flex}
+.wallpaper-options{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wallpaper-option{aspect-ratio:1;border-radius:16px;cursor:pointer;border:3px solid transparent;transition:all .3s;position:relative;overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px}
+.wallpaper-option:active{transform:scale(.95)}
+.wallpaper-option.active{border-color:#00ff88;box-shadow:0 0 20px rgba(0,255,136,.5)}
+.wallpaper-option.green{background:linear-gradient(160deg,#0a2a1a 0%,#0d3a24 50%,#061a10 100%)}
+.wallpaper-option.blue{background:linear-gradient(160deg,#0a1a2a 0%,#0d2440 50%,#061020 100%)}
+.wallpaper-option.black{background:linear-gradient(160deg,#000 0%,#0a0a0a 50%,#000 100%)}
+.wallpaper-check{width:22px;height:22px;background:#00ff88;border-radius:50%;display:none;align-items:center;justify-content:center;color:#0f0f1e;font-size:13px;font-weight:700}
+.wallpaper-option.active .wallpaper-check{display:flex}
+.wallpaper-label{position:absolute;top:8px;left:0;right:0;text-align:center;color:#fff;font-size:11px;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.appearance-hint{color:#666;font-size:12px;text-align:center;margin-top:20px;line-height:1.5}
+#notesScreen{background:#0f0f1e;transition:background .3s}
+body.light-theme #notesScreen{background:#f5f5f7}
+.notes-list{flex:1;overflow-y:auto;padding:15px}
+.note-card{background:linear-gradient(135deg,#2a2a1a,#1a1a0e);border-radius:14px;padding:15px;margin-bottom:10px;border-left:4px solid #ffd93d;cursor:pointer;transition:all .2s;position:relative}
+body.light-theme .note-card{background:#fff8dc;border-left:4px solid #f6c90e}
+.note-card:active{transform:scale(.98)}
+.note-title{color:#fff;font-size:15px;font-weight:700;margin-bottom:5px;padding-right:30px;word-break:break-word}
+body.light-theme .note-title{color:#111}
+.note-preview{color:#999;font-size:12px;line-height:1.4;max-height:38px;overflow:hidden;word-break:break-word}
+body.light-theme .note-preview{color:#666}
+.note-date{color:#666;font-size:10px;margin-top:8px}
+.note-delete{position:absolute;top:12px;right:12px;background:rgba(255,68,68,.15);border:none;color:#ff4444;width:26px;height:26px;border-radius:8px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.notes-empty{text-align:center;padding:80px 20px;color:#555}
+.notes-empty-icon{font-size:70px;margin-bottom:15px;opacity:.4}
+.notes-empty-text{font-size:14px;line-height:1.5}
+#noteEditorScreen{background:#0f0f1e;transition:background .3s}
+body.light-theme #noteEditorScreen{background:#f5f5f7}
+.note-editor{flex:1;display:flex;flex-direction:column;padding:15px;overflow:hidden}
+.note-input-title{width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:14px;color:#fff;font-size:16px;font-weight:700;margin-bottom:10px;outline:none;font-family:inherit}
+body.light-theme .note-input-title{background:#fff;border:1px solid #ddd;color:#111}
+.note-input-title:focus{border-color:#ffd93d}
+.note-input-body{flex:1;width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:14px;color:#fff;font-size:14px;outline:none;resize:none;font-family:inherit;line-height:1.5;margin-bottom:10px}
+body.light-theme .note-input-body{background:#fff;border:1px solid #ddd;color:#111}
+.note-input-body:focus{border-color:#ffd93d}
+.note-save-btn{width:100%;padding:14px;background:linear-gradient(135deg,#ffd93d,#f6c90e);border:none;border-radius:12px;color:#0f0f1e;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.5px}
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:400;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:#1a1a2e;border-radius:20px;padding:25px;width:100%;max-width:320px;border:1px solid #2a2a4a}
+body.light-theme .modal{background:#fff;border:1px solid #ddd}
+.modal-title{color:#fff;font-size:18px;font-weight:700;margin-bottom:20px;text-align:center}
+body.light-theme .modal-title{color:#111}
+.modal-input{width:100%;padding:14px;background:#0f0f1e;border:2px solid #2a2a4a;border-radius:12px;color:#fff;font-size:20px;text-align:center;letter-spacing:8px;margin-bottom:15px;outline:none}
+body.light-theme .modal-input{background:#f5f5f7;border:2px solid #ddd;color:#111}
+.modal-input:focus{border-color:#00ff88}
+.modal-btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:8px}
+.modal-btn.primary{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#0f0f1e}
+.modal-btn.secondary{background:#2a2a4a;color:#fff}
+body.light-theme .modal-btn.secondary{background:#e5e5ea;color:#111}
+#adminScreen{background:linear-gradient(160deg,#1a0000,#0f0f1e);transition:background .3s}
+body.light-theme #adminScreen{background:linear-gradient(160deg,#ffe5e5,#f5f5f7)}
+.admin-header{background:linear-gradient(135deg,#ff4444,#cc0000);padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
+.admin-title{color:#fff;font-size:16px;font-weight:700}
+.admin-badge{background:rgba(255,255,255,.2);color:#fff;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700}
+.admin-content{flex:1;overflow-y:auto;padding:15px}
+.admin-section{margin-bottom:20px}
+.admin-section-title{color:#ff6666;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:4px}
+.admin-btn{width:100%;padding:12px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;background:linear-gradient(135deg,#2a2a4a,#1a1a2e);color:#fff;border:1px solid #3a3a5a;text-align:left;padding-left:15px;display:flex;align-items:center;gap:10px}
+.admin-btn.cheat{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#0f0f1e;border:none}
+.admin-btn.german{background:linear-gradient(135deg,#ffcc00,#cc9900);color:#0f0f1e;border:none}
+.admin-btn.russian{background:linear-gradient(135deg,#ff5555,#cc0000);color:#fff;border:none}
+.admin-btn.danger{background:linear-gradient(135deg,#ff4444,#cc0000);color:#fff;border:none}
+.admin-btn.scooter-btn{background:linear-gradient(135deg,#00e5ff,#0099cc);color:#0f0f1e;border:none;padding:15px;font-size:14px;box-shadow:0 0 15px rgba(0,229,255,.4);margin-bottom:12px}
+.admin-btn-img{width:40px;height:40px;object-fit:cover;background:#fff;border-radius:8px;flex-shrink:0}
+.toast{position:absolute;top:100px;left:50%;transform:translateX(-50%) translateY(-20px);background:#00ff88;color:#0f0f1e;padding:12px 24px;border-radius:12px;font-weight:700;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:1000;max-width:80%;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#ff4444;color:#fff}
+.toast.admin{background:linear-gradient(135deg,#ff4444,#cc0000);color:#fff}
+.toast.scooter{background:linear-gradient(135deg,#00e5ff,#0099cc);color:#0f0f1e}
+.toast.note{background:linear-gradient(135deg,#ffd93d,#f6c90e);color:#0f0f1e}
+.toast.save{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#0f0f1e}
+.toast.german{background:linear-gradient(135deg,#ffcc00,#cc9900);color:#0f0f1e}
+.toast.russian{background:linear-gradient(135deg,#ff5555,#cc0000);color:#fff}
 </style>
 </head>
 <body>
 <div class="phone">
-    <div class="notch"></div>
-    <div class="status-bar"><span id="clock">9:41</span><span>📶 🔋 100%</span></div>
+<div class="notch"></div>
+<div class="status-bar"><span id="clock">9:41</span><span>📶 🔋 100%</span></div>
 
-    <div class="screen active" id="homeScreen">
-        <div class="home-header">
-            <div class="home-time" id="homeTime">9:41</div>
-            <div class="home-date" id="homeDate">Понедельник, 1 января</div>
-        </div>
-        <div class="apps-grid">
-            <div class="app-icon" onclick="openApp('autobuy')"><div class="app-icon-img autobuy">🚗</div><div class="app-icon-label">AutoBuy</div></div>
-            <div class="app-icon" onclick="openApp('settings')"><div class="app-icon-img settings">⚙️</div><div class="app-icon-label">Настройки</div></div>
-            <div class="app-icon"><div class="app-icon-img gallery">🖼️</div><div class="app-icon-label">Галерея</div></div>
-            <div class="app-icon" onclick="openApp('notes')"><div class="app-icon-img notes">📝</div><div class="app-icon-label">Заметки</div></div>
-            <div class="app-icon"><div class="app-icon-img clock">🕐</div><div class="app-icon-label">Часы</div></div>
-            <div class="app-icon"><div class="app-icon-img calc">🔢</div><div class="app-icon-label">Калькулятор</div></div>
-            <div class="app-icon"><div class="app-icon-img browser">🌐</div><div class="app-icon-label">Браузер</div></div>
-            <div class="app-icon"><div class="app-icon-img camera">📷</div><div class="app-icon-label">Камера</div></div>
-        </div>
-        <div class="dock">
-            <div class="app-icon" onclick="openApp('autobuy')"><div class="app-icon-img autobuy">🚗</div></div>
-            <div class="app-icon" onclick="openApp('settings')"><div class="app-icon-img settings">⚙️</div></div>
-            <div class="app-icon"><div class="app-icon-img browser">🌐</div></div>
-            <div class="app-icon"><div class="app-icon-img camera">📷</div></div>
-        </div>
-    </div>
+<div class="screen active" id="homeScreen">
+<div class="home-header"><div class="home-time" id="homeTime">9:41</div><div class="home-date" id="homeDate">Понедельник, 1 января</div></div>
+<div class="apps-grid">
+<div class="app-icon" onclick="openApp('autobuy')"><div class="app-icon-img autobuy">🚗</div><div class="app-icon-label">AutoBuy</div></div>
+<div class="app-icon" onclick="openApp('settings')"><div class="app-icon-img settings">⚙️</div><div class="app-icon-label">Настройки</div></div>
+<div class="app-icon"><div class="app-icon-img gallery">🖼️</div><div class="app-icon-label">Галерея</div></div>
+<div class="app-icon" onclick="openApp('notes')"><div class="app-icon-img notes">📝</div><div class="app-icon-label">Заметки</div></div>
+<div class="app-icon"><div class="app-icon-img clock">🕐</div><div class="app-icon-label">Часы</div></div>
+<div class="app-icon"><div class="app-icon-img calc">🔢</div><div class="app-icon-label">Калькулятор</div></div>
+<div class="app-icon"><div class="app-icon-img browser">🌐</div><div class="app-icon-label">Браузер</div></div>
+<div class="app-icon"><div class="app-icon-img camera">📷</div><div class="app-icon-label">Камера</div></div>
+</div>
+<div class="dock">
+<div class="app-icon" onclick="openApp('autobuy')"><div class="app-icon-img autobuy">🚗</div></div>
+<div class="app-icon" onclick="openApp('settings')"><div class="app-icon-img settings">⚙️</div></div>
+<div class="app-icon"><div class="app-icon-img browser">🌐</div></div>
+<div class="app-icon"><div class="app-icon-img camera">📷</div></div>
+</div>
+</div>
 
-    <div class="screen" id="autobuyScreen">
-        <div class="app-header">
-            <button class="back-btn" onclick="goHome()">←</button>
-            <div class="app-logo"><div class="logo-icon">🚗</div><div class="logo-text">Auto<span>Buy</span></div></div>
-            <div class="balance"><div class="balance-label">Баланс</div><div class="balance-value" id="balance">$10 000</div></div>
-        </div>
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('market')">🏪 Рынок</button>
-            <button class="tab" onclick="switchTab('garage')">🚗 Гараж</button>
-        </div>
-        <div class="content" id="content"></div>
-    </div>
+<div class="screen" id="autobuyScreen">
+<div class="app-header">
+<button class="back-btn" onclick="goHome()">←</button>
+<div class="app-logo"><div class="logo-icon">🚗</div><div class="logo-text">Auto<span>Buy</span></div></div>
+<div class="balance"><div class="balance-label">Баланс</div><div class="balance-value" id="balance">$10 000</div></div>
+</div>
+<div class="tabs">
+<button class="tab active" onclick="switchTab('market')">🏪 Рынок</button>
+<button class="tab" onclick="switchTab('garage')">🚗 Гараж</button>
+</div>
+<div class="content" id="content"></div>
+</div>
 
-    <div class="screen" id="settingsScreen">
-        <div class="app-header">
-            <button class="back-btn" onclick="goHome()">←</button>
-            <div class="app-title">⚙️ Настройки</div>
-            <div style="width: 40px;"></div>
-        </div>
-        <div class="settings-list">
-            <div class="settings-item"><div class="settings-item-icon">📶</div><div class="settings-item-text">Wi-Fi и сеть</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item"><div class="settings-item-icon">🔔</div><div class="settings-item-text">Уведомления</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item"><div class="settings-item-icon">🔊</div><div class="settings-item-text">Звуки</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item"><div class="settings-item-icon">🔋</div><div class="settings-item-text">Батарея</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item" onclick="openApp('appearance')"><div class="settings-item-icon">🎨</div><div class="settings-item-text">Обои и тема</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item"><div class="settings-item-icon">🔒</div><div class="settings-item-text">Безопасность</div><div class="settings-item-arrow">›</div></div>
-            <div class="settings-item admin" onclick="openPasswordModal()"><div class="settings-item-icon">👑</div><div class="settings-item-text">Админ-панель</div><div class="settings-item-arrow">›</div></div>
-        </div>
-    </div>
+<div class="screen" id="settingsScreen">
+<div class="app-header"><button class="back-btn" onclick="goHome()">←</button><div class="app-title">⚙️ Настройки</div><div style="width:40px"></div></div>
+<div class="settings-list">
+<div class="settings-item"><div class="settings-item-icon">📶</div><div class="settings-item-text">Wi-Fi и сеть</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item"><div class="settings-item-icon">🔔</div><div class="settings-item-text">Уведомления</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item"><div class="settings-item-icon">🔊</div><div class="settings-item-text">Звуки</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item"><div class="settings-item-icon">🔋</div><div class="settings-item-text">Батарея</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item" onclick="openApp('appearance')"><div class="settings-item-icon">🎨</div><div class="settings-item-text">Обои и тема</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item"><div class="settings-item-icon">🔒</div><div class="settings-item-text">Безопасность</div><div class="settings-item-arrow">›</div></div>
+<div class="settings-item admin" onclick="openPasswordModal()"><div class="settings-item-icon">👑</div><div class="settings-item-text">Админ-панель</div><div class="settings-item-arrow">›</div></div>
+</div>
+</div>
 
-    <div class="screen" id="appearanceScreen">
-        <div class="app-header"><button class="back-btn" onclick="openApp('settings')">←</button><div class="app-title">🎨 Обои и тема</div><div style="width: 40px;"></div></div>
-        <div class="appearance-content">
-            <div class="appearance-section">
-                <div class="appearance-section-title">🌗 Тема оформления</div>
-                <div class="theme-options">
-                    <div class="theme-option dark" id="themeDark" onclick="setTheme('dark')"><div class="theme-check">✓</div><div class="theme-option-icon">🌙</div><div class="theme-option-label">Тёмная</div></div>
-                    <div class="theme-option light" id="themeLight" onclick="setTheme('light')"><div class="theme-check">✓</div><div class="theme-option-icon">☀️</div><div class="theme-option-label">Светлая</div></div>
-                </div>
-            </div>
-            <div class="appearance-section">
-                <div class="appearance-section-title">🖼️ Цвет обоев</div>
-                <div class="wallpaper-options">
-                    <div class="wallpaper-option green" id="wpGreen" onclick="setWallpaper('green')"><div class="wallpaper-label">Зелёный</div><div class="wallpaper-check">✓</div></div>
-                    <div class="wallpaper-option blue" id="wpBlue" onclick="setWallpaper('blue')"><div class="wallpaper-label">Синий</div><div class="wallpaper-check">✓</div></div>
-                    <div class="wallpaper-option black" id="wpBlack" onclick="setWallpaper('black')"><div class="wallpaper-label">Чёрный</div><div class="wallpaper-check">✓</div></div>
-                </div>
-                <div class="appearance-hint">Настройки применяются ко всей системе<br>и сохраняются автоматически</div>
-            </div>
-        </div>
-    </div>
+<div class="screen" id="appearanceScreen">
+<div class="app-header"><button class="back-btn" onclick="openApp('settings')">←</button><div class="app-title">🎨 Обои и тема</div><div style="width:40px"></div></div>
+<div class="appearance-content">
+<div class="appearance-section">
+<div class="appearance-section-title">🌗 Тема оформления</div>
+<div class="theme-options">
+<div class="theme-option dark" id="themeDark" onclick="setTheme('dark')"><div class="theme-check">✓</div><div class="theme-option-icon">🌙</div><div class="theme-option-label">Тёмная</div></div>
+<div class="theme-option light" id="themeLight" onclick="setTheme('light')"><div class="theme-check">✓</div><div class="theme-option-icon">☀️</div><div class="theme-option-label">Светлая</div></div>
+</div>
+</div>
+<div class="appearance-section">
+<div class="appearance-section-title">🖼️ Цвет обоев</div>
+<div class="wallpaper-options">
+<div class="wallpaper-option green" id="wpGreen" onclick="setWallpaper('green')"><div class="wallpaper-label">Зелёный</div><div class="wallpaper-check">✓</div></div>
+<div class="wallpaper-option blue" id="wpBlue" onclick="setWallpaper('blue')"><div class="wallpaper-label">Синий</div><div class="wallpaper-check">✓</div></div>
+<div class="wallpaper-option black" id="wpBlack" onclick="setWallpaper('black')"><div class="wallpaper-label">Чёрный</div><div class="wallpaper-check">✓</div></div>
+</div>
+<div class="appearance-hint">Настройки применяются ко всей системе<br>и сохраняются автоматически</div>
+</div>
+</div>
+</div>
 
-    <div class="screen" id="notesScreen">
-        <div class="app-header"><button class="back-btn" onclick="goHome()">←</button><div class="app-title">📝 Заметки</div><button class="header-btn" onclick="openNoteEditor()">＋</button></div>
-        <div class="notes-list" id="notesList"></div>
-    </div>
+<div class="screen" id="notesScreen">
+<div class="app-header"><button class="back-btn" onclick="goHome()">←</button><div class="app-title">📝 Заметки</div><button class="header-btn" onclick="openNoteEditor()">＋</button></div>
+<div class="notes-list" id="notesList"></div>
+</div>
 
-    <div class="screen" id="noteEditorScreen">
-        <div class="app-header"><button class="back-btn" onclick="openApp('notes')">←</button><div class="app-title" id="editorTitle">Новая заметка</div><div style="width: 40px;"></div></div>
-        <div class="note-editor">
-            <input type="text" class="note-input-title" id="noteTitle" placeholder="Заголовок...">
-            <textarea class="note-input-body" id="noteBody" placeholder="Текст заметки..."></textarea>
-            <button class="note-save-btn" onclick="saveNote()">💾 Сохранить</button>
-        </div>
-    </div>
+<div class="screen" id="noteEditorScreen">
+<div class="app-header"><button class="back-btn" onclick="openApp('notes')">←</button><div class="app-title" id="editorTitle">Новая заметка</div><div style="width:40px"></div></div>
+<div class="note-editor">
+<input type="text" class="note-input-title" id="noteTitle" placeholder="Заголовок...">
+<textarea class="note-input-body" id="noteBody" placeholder="Текст заметки..."></textarea>
+<button class="note-save-btn" onclick="saveNote()">💾 Сохранить</button>
+</div>
+</div>
 
-    <div class="screen" id="adminScreen">
-        <div class="admin-header">
-            <button class="back-btn" style="color: #fff;" onclick="openApp('settings')">←</button>
-            <div class="admin-title">👑 Админ-панель</div>
-            <div class="admin-badge">ADMIN</div>
-        </div>
-        <div class="admin-content">
-            <div class="admin-section">
-                <div class="admin-section-title">💰 Деньги</div>
-                <button class="admin-btn cheat" onclick="addMoney(10000)">+ $10 000</button>
-                <button class="admin-btn cheat" onclick="addMoney(100000)">+ $100 000</button>
-                <button class="admin-btn cheat" onclick="addMoney(1000000)">+ $1 000 000</button>
-            </div>
-            <div class="admin-section">
-                <div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
-                <button class="admin-btn scooter-btn" onclick="giveKugoo()">
-                    <img class="admin-btn-img" src="1.webp" alt="Kugoo G2" onerror="this.style.display='none'">
-                    <span>🛴 Выдать Kugoo G2 (бесплатно)</span>
-                </button>
-            </div>
-            <div class="admin-section">
-                <div class="admin-section-title">🇩🇪 Немецкие машины</div>
-                <div id="adminGermanCars"></div>
-            </div>
-            <div class="admin-section">
-                <div class="admin-section-title">🇷🇺 Российские машины</div>
-                <div id="adminRussianCars"></div>
-            </div>
-            <div class="admin-section">
-                <div class="admin-section-title">🌍 Другие машины</div>
-                <div id="adminOtherCars"></div>
-            </div>
-            <div class="admin-section">
-                <div class="admin-section-title">⚠️ Опасные действия</div>
-                <button class="admin-btn danger" onclick="clearGarage()">🗑 Очистить гараж</button>
-                <button class="admin-btn danger" onclick="resetAll()">💥 Полный сброс игры</button>
-            </div>
-        </div>
-    </div>
+<div class="screen" id="adminScreen">
+<div class="admin-header">
+<button class="back-btn" style="color:#fff" onclick="openApp('settings')">←</button>
+<div class="admin-title">👑 Админ-панель</div>
+<div class="admin-badge">ADMIN</div>
+</div>
+<div class="admin-content">
+<div class="admin-section">
+<div class="admin-section-title">💰 Деньги</div>
+<button class="admin-btn cheat" onclick="addMoney(10000)">+ $10 000</button>
+<button class="admin-btn cheat" onclick="addMoney(100000)">+ $100 000</button>
+<button class="admin-btn cheat" onclick="addMoney(1000000)">+ $1 000 000</button>
+</div>
+<div class="admin-section">
+<div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
+<button class="admin-btn scooter-btn" onclick="giveKugoo()">
+<img class="admin-btn-img" src="1.webp" alt="Kugoo G2" onerror="this.style.display='none'">
+<span>🛴 Выдать Kugoo G2 (бесплатно)</span>
+</button>
+</div>
+<div class="admin-section">
+<div class="admin-section-title">🇩🇪 Немецкие машины</div>
+<div id="adminGermanCars"></div>
+</div>
+<div class="admin-section">
+<div class="admin-section-title">🇷🇺 Российские машины</div>
+<div id="adminRussianCars"></div>
+</div>
+<div class="admin-section">
+<div class="admin-section-title">🌍 Другие машины</div>
+<div id="adminOtherCars"></div>
+</div>
+<div class="admin-section">
+<div class="admin-section-title">⚠️ Опасные действия</div>
+<button class="admin-btn danger" onclick="clearGarage()">🗑 Очистить гараж</button>
+<button class="admin-btn danger" onclick="resetAll()">💥 Полный сброс игры</button>
+</div>
+</div>
+</div>
 
-    <div class="modal-overlay" id="passwordModal">
-        <div class="modal">
-            <div class="modal-title">🔐 Вход в админ-панель</div>
-            <input type="password" class="modal-input" id="passwordInput" placeholder="••••" maxlength="4" inputmode="numeric">
-            <button class="modal-btn primary" onclick="checkPassword()">Войти</button>
-            <button class="modal-btn secondary" onclick="closePasswordModal()">Отмена</button>
-        </div>
-    </div>
+<div class="modal-overlay" id="passwordModal">
+<div class="modal">
+<div class="modal-title">🔐 Вход в админ-панель</div>
+<input type="password" class="modal-input" id="passwordInput" placeholder="••••" maxlength="4" inputmode="numeric">
+<button class="modal-btn primary" onclick="checkPassword()">Войти</button>
+<button class="modal-btn secondary" onclick="closePasswordModal()">Отмена</button>
+</div>
+</div>
 
-    <div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div>
 </div>
 
 <script>
-    // ========== 30 МАШИН + 1 САМОКАТ ==========
-    const CAR_MODELS = [
-        // ===== ДРУГИЕ (8 штук) =====
-        { name: 'Lada Priora', emoji: '🚗', year: 2012, basePrice: 2500, power: 98, country: 'other' },
-        { name: 'Kia Rio', emoji: '🚘', year: 2018, basePrice: 6500, power: 123, country: 'other' },
-        { name: 'Hyundai Solaris', emoji: '🚖', year: 2019, basePrice: 7500, power: 123, country: 'other' },
-        { name: 'Toyota Camry', emoji: '🚗', year: 2020, basePrice: 15000, power: 200, country: 'other' },
-        { name: 'Tesla Model S', emoji: '⚡', year: 2023, basePrice: 55000, power: 670, country: 'other' },
-        { name: 'Lamborghini Huracan', emoji: '🔥', year: 2024, basePrice: 150000, power: 640, country: 'other' },
-        { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670, country: 'other' },
-        { name: 'Nissan GT-R', emoji: '🏎️', year: 2020, basePrice: 90000, power: 570, country: 'other' },
+// ========== 30 МАШИН ==========
+const CAR_MODELS = [
+{ name:'Lada Priora', emoji:'🚗', year:2012, basePrice:2500, power:98, country:'other' },
+{ name:'Kia Rio', emoji:'🚘', year:2018, basePrice:6500, power:123, country:'other' },
+{ name:'Hyundai Solaris', emoji:'🚖', year:2019, basePrice:7500, power:123, country:'other' },
+{ name:'Toyota Camry', emoji:'🚗', year:2020, basePrice:15000, power:200, country:'other' },
+{ name:'Tesla Model S', emoji:'⚡', year:2023, basePrice:55000, power:670, country:'other' },
+{ name:'Lamborghini Huracan', emoji:'🔥', year:2024, basePrice:150000, power:640, country:'other' },
+{ name:'Ferrari 488', emoji:'🐎', year:2023, basePrice:180000, power:670, country:'other' },
+{ name:'Nissan GT-R', emoji:'🏎️', year:2020, basePrice:90000, power:570, country:'other' },
 
-        // ===== НЕМЕЦКИЕ (11 штук) =====
-        { name: 'Volkswagen Golf', emoji: '🚗', year: 2015, basePrice: 8000, power: 110, country: 'german' },
-        { name: 'Volkswagen Passat', emoji: '🚙', year: 2018, basePrice: 14000, power: 150, country: 'german' },
-        { name: 'BMW 3 Series', emoji: '🏎️', year: 2017, basePrice: 18000, power: 184, country: 'german' },
-        { name: 'BMW 5 Series', emoji: '🏎️', year: 2021, basePrice: 28000, power: 249, country: 'german' },
-        { name: 'BMW X5', emoji: '🚙', year: 2019, basePrice: 45000, power: 340, country: 'german' },
-        { name: 'BMW M5', emoji: '🏎️', year: 2022, basePrice: 95000, power: 600, country: 'german' },
-        { name: 'Mercedes E-Class', emoji: '🚙', year: 2022, basePrice: 35000, power: 299, country: 'german' },
-        { name: 'Mercedes G-Class', emoji: '🚙', year: 2022, basePrice: 130000, power: 585, country: 'german' },
-        { name: 'Audi A6', emoji: '🚘', year: 2021, basePrice: 30000, power: 245, country: 'german' },
-        { name: 'Audi RS6', emoji: '🏎️', year: 2022, basePrice: 110000, power: 600, country: 'german' },
-        { name: 'Porsche 911', emoji: '🏎️', year: 2023, basePrice: 75000, power: 450, country: 'german' },
+{ name:'Volkswagen Golf', emoji:'🚗', year:2015, basePrice:8000, power:110, country:'german' },
+{ name:'Volkswagen Passat', emoji:'🚙', year:2018, basePrice:14000, power:150, country:'german' },
+{ name:'BMW 3 Series', emoji:'🏎️', year:2017, basePrice:18000, power:184, country:'german' },
+{ name:'BMW 5 Series', emoji:'🏎️', year:2021, basePrice:28000, power:249, country:'german' },
+{ name:'BMW X5', emoji:'🚙', year:2019, basePrice:45000, power:340, country:'german' },
+{ name:'BMW M5', emoji:'🏎️', year:2022, basePrice:95000, power:600, country:'german' },
+{ name:'Mercedes E-Class', emoji:'🚙', year:2022, basePrice:35000, power:299, country:'german' },
+{ name:'Mercedes G-Class', emoji:'🚙', year:2022, basePrice:130000, power:585, country:'german' },
+{ name:'Audi A6', emoji:'🚘', year:2021, basePrice:30000, power:245, country:'german' },
+{ name:'Audi RS6', emoji:'🏎️', year:2022, basePrice:110000, power:600, country:'german' },
+{ name:'Porsche 911', emoji:'🏎️', year:2023, basePrice:75000, power:450, country:'german' },
 
-        // ===== РОССИЙСКИЕ (11 штук) =====
-        { name: 'Lada Granta', emoji: '🚗', year: 2018, basePrice: 4500, power: 87, country: 'russian' },
-        { name: 'Lada Vesta', emoji: '🚗', year: 2020, basePrice: 7000, power: 106, country: 'russian' },
-        { name: 'Lada Niva Legend', emoji: '🚙', year: 2021, basePrice: 6000, power: 83, country: 'russian' },
-        { name: 'Lada 2107', emoji: '🚗', year: 2005, basePrice: 1500, power: 72, country: 'russian' },
-        { name: 'Lada 2110', emoji: '🚗', year: 2007, basePrice: 1800, power: 80, country: 'russian' },
-        { name: 'УАЗ Патриот', emoji: '🚙', year: 2020, basePrice: 12000, power: 150, country: 'russian' },
-        { name: 'ГАЗ Волга 3110', emoji: '🚗', year: 2003, basePrice: 2200, power: 130, country: 'russian' },
-        { name: 'ГАЗ Чайка', emoji: '🚗', year: 1965, basePrice: 35000, power: 195, country: 'russian' },
-        { name: 'Москвич 412', emoji: '🚗', year: 1975, basePrice: 3000, power: 75, country: 'russian' },
-        { name: 'ВАЗ 2101 Копейка', emoji: '🚗', year: 1974, basePrice: 3500, power: 62, country: 'russian' },
-        { name: 'Marussia B1', emoji: '🏎️', year: 2010, basePrice: 50000, power: 420, country: 'russian' },
-    ];
-    // Итого: 8 + 11 + 11 = 30 машин
+{ name:'Lada Granta', emoji:'🚗', year:2018, basePrice:4500, power:87, country:'russian' },
+{ name:'Lada Vesta', emoji:'🚗', year:2020, basePrice:7000, power:106, country:'russian' },
+{ name:'Lada Niva Legend', emoji:'🚙', year:2021, basePrice:6000, power:83, country:'russian' },
+{ name:'Lada 2107', emoji:'🚗', year:2005, basePrice:1500, power:72, country:'russian' },
+{ name:'Lada 2110', emoji:'🚗', year:2007, basePrice:1800, power:80, country:'russian' },
+{ name:'УАЗ Патриот', emoji:'🚙', year:2020, basePrice:12000, power:150, country:'russian' },
+{ name:'ГАЗ Волга 3110', emoji:'🚗', year:2003, basePrice:2200, power:130, country:'russian' },
+{ name:'ГАЗ Чайка', emoji:'🚗', year:1965, basePrice:35000, power:195, country:'russian' },
+{ name:'Москвич 412', emoji:'🚗', year:1975, basePrice:3000, power:75, country:'russian' },
+{ name:'ВАЗ 2101 Копейка', emoji:'🚗', year:1974, basePrice:3500, power:62, country:'russian' },
+{ name:'Marussia B1', emoji:'🏎️', year:2010, basePrice:50000, power:420, country:'russian' },
+];
 
-    const KUGOO_IMAGE = '1.webp';
-    const KUGOO_SCOOTER = {
-        name: 'Kugoo G2', emoji: '🛴', year: 2024, basePrice: 55000, power: 0,
-        image: KUGOO_IMAGE, isScooter: true, country: 'other'
-    };
+const KUGOO_IMAGE = '1.webp';
+const KUGOO_SCOOTER = { name:'Kugoo G2', emoji:'🛴', year:2024, basePrice:55000, power:0, image:KUGOO_IMAGE, isScooter:true, country:'other' };
+const ADMIN_PASSWORD = '1919';
+const STORAGE_KEY = 'autobuy_save_v2';
+const APPEARANCE_KEY = 'autobuy_appearance_v1';
 
-    const ADMIN_PASSWORD = '1919';
-    const STORAGE_KEY = 'autobuy_save_v2';
-    const APPEARANCE_KEY = 'autobuy_appearance_v1';
+let state = { balance: 10000, market: [], garage: [], activeTab: 'market' };
+let appearance = { theme: 'dark', wallpaper: 'green' };
+let notes = [];
+let currentNoteId = null;
 
-    let state = { balance: 10000, market: [], garage: [], activeTab: 'market' };
-    let appearance = { theme: 'dark', wallpaper: 'green' };
-    let notes = [];
-    let currentNoteId = null;
+/* ===== ВНЕШНИЙ ВИД ===== */
+function loadAppearance() {
+  try {
+    const raw = localStorage.getItem(APPEARANCE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved.theme === 'dark' || saved.theme === 'light') appearance.theme = saved.theme;
+    if (['green','blue','black'].includes(saved.wallpaper)) appearance.wallpaper = saved.wallpaper;
+  } catch(e) {}
+}
+function saveAppearance() {
+  try { localStorage.setItem(APPEARANCE_KEY, JSON.stringify(appearance)); } catch(e) {}
+}
+function applyAppearance() {
+  document.body.classList.toggle('light-theme', appearance.theme === 'light');
+  const home = document.getElementById('homeScreen');
+  home.classList.remove('wallpaper-green','wallpaper-blue','wallpaper-black');
+  home.classList.add('wallpaper-' + appearance.wallpaper);
+  const tD = document.getElementById('themeDark');
+  const tL = document.getElementById('themeLight');
+  if (tD) tD.classList.toggle('active', appearance.theme === 'dark');
+  if (tL) tL.classList.toggle('active', appearance.theme === 'light');
+  const wG = document.getElementById('wpGreen');
+  const wB = document.getElementById('wpBlue');
+  const wK = document.getElementById('wpBlack');
+  if (wG) wG.classList.toggle('active', appearance.wallpaper === 'green');
+  if (wB) wB.classList.toggle('active', appearance.wallpaper === 'blue');
+  if (wK) wK.classList.toggle('active', appearance.wallpaper === 'black');
+}
+function setTheme(theme) {
+  if (theme !== 'dark' && theme !== 'light') return;
+  appearance.theme = theme;
+  saveAppearance(); applyAppearance();
+  showToast(theme === 'dark' ? '🌙 Тёмная тема' : '☀️ Светлая тема', 'save');
+}
+function setWallpaper(color) {
+  if (!['green','blue','black'].includes(color)) return;
+  appearance.wallpaper = color;
+  saveAppearance(); applyAppearance();
+  const names = { green:'🟢 Зелёные обои', blue:'🔵 Синие обои', black:'⚫ Чёрные обои' };
+  showToast(names[color], 'save');
+}
 
-    /* ===== ВНЕШНИЙ ВИД ===== */
-    function loadAppearance() {
-        try {
-            const raw = localStorage.getItem(APPEARANCE_KEY);
-            if (!raw) return;
-            const saved = JSON.parse(raw);
-            if (saved.theme === 'dark' || saved.theme === 'light') appearance.theme = saved.theme;
-            if (['green', 'blue', 'black'].includes(saved.wallpaper)) appearance.wallpaper = saved.wallpaper;
-        } catch (e) {}
-    }
-    function saveAppearance() {
-        try { localStorage.setItem(APPEARANCE_KEY, JSON.stringify(appearance)); } catch (e) {}
-    }
-    function applyAppearance() {
-        document.body.classList.toggle('light-theme', appearance.theme === 'light');
-        const home = document.getElementById('homeScreen');
-        home.classList.remove('wallpaper-green', 'wallpaper-blue', 'wallpaper-black');
-        home.classList.add('wallpaper-' + appearance.wallpaper);
-        document.getElementById('themeDark').classList.toggle('active', appearance.theme === 'dark');
-        document.getElementById('themeLight').classList.toggle('active', appearance.theme === 'light');
-        document.getElementById('wpGreen').classList.toggle('active', appearance.wallpaper === 'green');
-        document.getElementById('wpBlue').classList.toggle('active', appearance.wallpaper === 'blue');
-        document.getElementById('wpBlack').classList.toggle('active', appearance.wallpaper === 'black');
-    }
-    function setTheme(theme) {
-        if (theme !== 'dark' && theme !== 'light') return;
-        appearance.theme = theme;
-        saveAppearance(); applyAppearance();
-        showToast(theme === 'dark' ? '🌙 Тёмная тема' : '☀️ Светлая тема', 'save');
-    }
-    function setWallpaper(color) {
-        if (!['green', 'blue', 'black'].includes(color)) return;
-        appearance.wallpaper = color;
-        saveAppearance(); applyAppearance();
-        const names = { green: '🟢 Зелёные обои', blue: '🔵 Синие обои', black: '⚫ Чёрные обои' };
-        showToast(names[color], 'save');
-    }
+/* ===== СОХРАНЕНИЕ ===== */
+function saveGame() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      balance: state.balance, market: state.market, garage: state.garage, savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const save = JSON.parse(raw);
+    if (!save || typeof save !== 'object') return false;
+    if (typeof save.balance === 'number') state.balance = save.balance;
+    if (Array.isArray(save.garage)) state.garage = save.garage;
+    if (Array.isArray(save.market) && save.market.length > 0) state.market = save.market;
+    return true;
+  } catch(e) { return false; }
+}
+function deleteSave() { try { localStorage.removeItem(STORAGE_KEY); } catch(e) {} }
 
-    /* ===== СОХРАНЕНИЕ ===== */
-    function saveGame() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                balance: state.balance, market: state.market, garage: state.garage, savedAt: Date.now()
-            }));
-        } catch (e) {}
-    }
-    function loadGame() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return false;
-            const save = JSON.parse(raw);
-            if (!save || typeof save !== 'object') return false;
-            if (typeof save.balance === 'number') state.balance = save.balance;
-            if (Array.isArray(save.garage)) state.garage = save.garage;
-            if (Array.isArray(save.market) && save.market.length > 0) state.market = save.market;
-            return true;
-        } catch (e) { return false; }
-    }
-    function deleteSave() { try { localStorage.removeItem(STORAGE_KEY); } catch (e) {} }
+/* ===== ЗАМЕТКИ ===== */
+function loadNotes() {
+  try {
+    const saved = localStorage.getItem('autobuy_notes');
+    if (saved) notes = JSON.parse(saved);
+  } catch(e) { notes = []; }
+}
+function saveNotesToStorage() {
+  try { localStorage.setItem('autobuy_notes', JSON.stringify(notes)); } catch(e) {}
+}
 
-    /* ===== ЗАМЕТКИ ===== */
-    function loadNotes() {
-        try {
-            const saved = localStorage.getItem('autobuy_notes');
-            if (saved) notes = JSON.parse(saved);
-        } catch (e) { notes = []; }
-    }
-    function saveNotesToStorage() {
-        try { localStorage.setItem('autobuy_notes', JSON.stringify(notes)); } catch (e) {}
-    }
+/* ===== ЭКРАНЫ ===== */
+function openApp(app) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (app === 'autobuy') { document.getElementById('autobuyScreen').classList.add('active'); render(); }
+  else if (app === 'settings') { document.getElementById('settingsScreen').classList.add('active'); }
+  else if (app === 'admin') { document.getElementById('adminScreen').classList.add('active'); renderAdminCars(); }
+  else if (app === 'notes') { document.getElementById('notesScreen').classList.add('active'); renderNotes(); }
+  else if (app === 'appearance') { document.getElementById('appearanceScreen').classList.add('active'); applyAppearance(); }
+}
+function goHome() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('homeScreen').classList.add('active');
+}
+function formatMoney(n) { return '$' + n.toLocaleString('ru-RU'); }
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => toast.className = 'toast', 1800);
+}
 
-    /* ===== ЭКРАНЫ ===== */
-    function openApp(app) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        if (app === 'autobuy') { document.getElementById('autobuyScreen').classList.add('active'); render(); }
-        else if (app === 'settings') { document.getElementById('settingsScreen').classList.add('active'); }
-        else if (app === 'admin') { document.getElementById('adminScreen').classList.add('active'); renderAdminCars(); }
-        else if (app === 'notes') { document.getElementById('notesScreen').classList.add('active'); renderNotes(); }
-        else if (app === 'appearance') { document.getElementById('appearanceScreen').classList.add('active'); applyAppearance(); }
-    }
-    function goHome() {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('homeScreen').classList.add('active');
-    }
-    function formatMoney(n) { return '$' + n.toLocaleString('ru-RU'); }
-    function showToast(msg, type = '') {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.className = 'toast show' + (type ? ' ' + type : '');
-        setTimeout(() => toast.className = 'toast', 1800);
-    }
+/* ===== ЗАМЕТКИ ===== */
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  if (notes.length === 0) {
+    list.innerHTML = '<div class="notes-empty"><div class="notes-empty-icon">📝</div><div class="notes-empty-text">У вас пока нет заметок.<br>Нажмите <b style="color:#ffd93d;">＋</b> вверху справа,<br>чтобы создать первую!</div></div>';
+    return;
+  }
+  const sorted = [...notes].sort((a,b) => b.updatedAt - a.updatedAt);
+  list.innerHTML = sorted.map(note => {
+    const title = note.title.trim() || 'Без названия';
+    const preview = note.body.trim() ? note.body.substring(0,80).replace(/\n/g,' ') + (note.body.length > 80 ? '...' : '') : 'Пустая заметка';
+    return '<div class="note-card" onclick="editNote(' + note.id + ')"><button class="note-delete" onclick="event.stopPropagation(); deleteNote(' + note.id + ')">🗑</button><div class="note-title">' + escapeHtml(title) + '</div><div class="note-preview">' + escapeHtml(preview) + '</div><div class="note-date">' + formatNoteDate(note.updatedAt) + '</div></div>';
+  }).join('');
+}
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function formatNoteDate(timestamp) {
+  const d = new Date(timestamp), now = new Date();
+  const pad = n => n.toString().padStart(2,'0');
+  const time = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  if (d.toDateString() === now.toDateString()) return 'Сегодня, ' + time;
+  const y = new Date(now); y.setDate(y.getDate() - 1);
+  if (d.toDateString() === y.toDateString()) return 'Вчера, ' + time;
+  return pad(d.getDate()) + '.' + pad(d.getMonth()+1) + '.' + d.getFullYear();
+}
+function openNoteEditor() {
+  currentNoteId = null;
+  document.getElementById('editorTitle').textContent = 'Новая заметка';
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteBody').value = '';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('noteEditorScreen').classList.add('active');
+  setTimeout(() => document.getElementById('noteTitle').focus(), 200);
+}
+function editNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (!note) return;
+  currentNoteId = id;
+  document.getElementById('editorTitle').textContent = 'Редактирование';
+  document.getElementById('noteTitle').value = note.title;
+  document.getElementById('noteBody').value = note.body;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('noteEditorScreen').classList.add('active');
+}
+function saveNote() {
+  const title = document.getElementById('noteTitle').value.trim();
+  const body = document.getElementById('noteBody').value.trim();
+  if (!title && !body) { showToast('❌ Заметка пустая', 'error'); return; }
+  const now = Date.now();
+  if (currentNoteId) {
+    const note = notes.find(n => n.id === currentNoteId);
+    if (note) { note.title = title; note.body = body; note.updatedAt = now; }
+    showToast('💾 Заметка обновлена', 'note');
+  } else {
+    notes.push({ id: now, title, body, createdAt: now, updatedAt: now });
+    showToast('✨ Заметка создана', 'note');
+  }
+  saveNotesToStorage();
+  openApp('notes');
+}
+function deleteNote(id) {
+  if (!confirm('Удалить эту заметку?')) return;
+  notes = notes.filter(n => n.id !== id);
+  saveNotesToStorage();
+  showToast('🗑 Заметка удалена', 'note');
+  renderNotes();
+}
 
-    /* ===== ЗАМЕТКИ ===== */
-    function renderNotes() {
-        const list = document.getElementById('notesList');
-        if (notes.length === 0) {
-            list.innerHTML = `<div class="notes-empty"><div class="notes-empty-icon">📝</div><div class="notes-empty-text">У вас пока нет заметок.<br>Нажмите <b style="color:#ffd93d;">＋</b> вверху справа,<br>чтобы создать первую!</div></div>`;
-            return;
-        }
-        const sorted = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
-        list.innerHTML = sorted.map(note => {
-            const title = note.title.trim() || 'Без названия';
-            const preview = note.body.trim() ? note.body.substring(0, 80).replace(/\n/g, ' ') + (note.body.length > 80 ? '...' : '') : 'Пустая заметка';
-            return `<div class="note-card" onclick="editNote(${note.id})"><button class="note-delete" onclick="event.stopPropagation(); deleteNote(${note.id})">🗑</button><div class="note-title">${escapeHtml(title)}</div><div class="note-preview">${escapeHtml(preview)}</div><div class="note-date">${formatNoteDate(note.updatedAt)}</div></div>`;
-        }).join('');
+/* ===== РЫНОК ===== */
+function generateMarket() {
+  state.market = [];
+  const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
+  for (let i = 0; i < 4; i++) {
+    const base = shuffled[i];
+    const variance = 0.85 + Math.random() * 0.3;
+    const price = Math.round(base.basePrice * variance);
+    state.market.push({ id: Date.now() + i + Math.random(), ...base, price, sellPrice: Math.round(price * 2) });
+  }
+  state.market.push({
+    id: Date.now() + 999 + Math.random(), ...KUGOO_SCOOTER,
+    price: KUGOO_SCOOTER.basePrice, sellPrice: KUGOO_SCOOTER.basePrice * 2
+  });
+  state.market.sort(() => Math.random() - 0.5);
+}
+function buyCar(id) {
+  const idx = state.market.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const car = state.market[idx];
+  if (state.balance < car.price) { showToast('❌ Недостаточно денег!', 'error'); return; }
+  state.balance -= car.price;
+  state.garage.push(car);
+  state.market.splice(idx, 1);
+  showToast('✅ Куплено: ' + car.name);
+  saveGame(); render();
+}
+function sellCar(id) {
+  const idx = state.garage.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  const car = state.garage[idx];
+  state.balance += car.sellPrice;
+  state.garage.splice(idx, 1);
+  showToast('💰 Продано за ' + formatMoney(car.sellPrice));
+  saveGame(); render();
+}
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabs = document.querySelectorAll('.tab');
+  if (tab === 'market') tabs[0].classList.add('active'); else tabs[1].classList.add('active');
+  render();
+}
+function render() {
+  document.getElementById('balance').textContent = formatMoney(state.balance);
+  const content = document.getElementById('content');
+  if (state.activeTab === 'market') {
+    if (state.market.length === 0) generateMarket();
+    content.innerHTML = '<div class="section-title">Доступные товары на рынке</div>' + state.market.map(car => renderMarketCar(car)).join('');
+  } else {
+    if (state.garage.length === 0) {
+      content.innerHTML = '<div class="empty"><div class="empty-icon">🚗</div><div class="empty-text">У вас пока нет машин.<br>Купите авто на рынке!</div></div>';
+    } else {
+      const totalProfit = state.garage.reduce((s,c) => s + c.sellPrice, 0);
+      content.innerHTML = '<div class="section-title">Ваш гараж (' + state.garage.length + ') · Стоимость: ' + formatMoney(totalProfit) + '</div>' + state.garage.map(car => renderGarageCar(car)).join('');
     }
-    function escapeHtml(str) {
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-    }
-    function formatNoteDate(timestamp) {
-        const d = new Date(timestamp), now = new Date();
-        const pad = n => n.toString().padStart(2, '0');
-        const time = pad(d.getHours()) + ':' + pad(d.getMinutes());
-        if (d.toDateString() === now.toDateString()) return 'Сегодня, ' + time;
-        const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
-        if (d.toDateString() === yesterday.toDateString()) return 'Вчера, ' + time;
-        return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
-    }
-    function openNoteEditor() {
-        currentNoteId = null;
-        document.getElementById('editorTitle').textContent = 'Новая заметка';
-        document.getElementById('noteTitle').value = '';
-        document.getElementById('noteBody').value = '';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('noteEditorScreen').classList.add('active');
-        setTimeout(() => document.getElementById('noteTitle').focus(), 200);
-    }
-    function editNote(id) {
-        const note = notes.find(n => n.id === id);
-        if (!note) return;
-        currentNoteId = id;
-        document.getElementById('editorTitle').textContent = 'Редактирование';
-        document.getElementById('noteTitle').value = note.title;
-        document.getElementById('noteBody').value = note.body;
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('noteEditorScreen').classList.add('active');
-    }
-    function saveNote() {
-        const title = document.getElementById('noteTitle').value.trim();
-        const body = document.getElementById('noteBody').value.trim();
-        if (!title && !body) { showToast('❌ Заметка пустая', 'error'); return; }
-        const now = Date.now();
-        if (currentNoteId) {
-            const note = notes.find(n => n.id === currentNoteId);
-            if (note) { note.title = title; note.body = body; note.updatedAt = now; }
-            showToast('💾 Заметка обновлена', 'note');
-        } else {
-            notes.push({ id: now, title, body, createdAt: now, updatedAt: now });
-            showToast('✨ Заметка создана', 'note');
-        }
-        saveNotesToStorage();
-        openApp('notes');
-    }
-    function deleteNote(id) {
-        if (!confirm('Удалить эту заметку?')) return;
-        notes = notes.filter(n => n.id !== id);
-        saveNotesToStorage();
-        showToast('🗑 Заметка удалена', 'note');
-        renderNotes();
-    }
+  }
+}
+function renderCarImage(car) {
+  if (car.image) {
+    return '<img class="car-image" src="' + car.image + '" alt="' + car.name + '" onerror="this.outerHTML=\'<div class=&quot;car-emoji&quot;>' + car.emoji + '</div>\'">';
+  }
+  return '<div class="car-emoji">' + car.emoji + '</div>';
+}
+function getCountryTag(car) {
+  if (car.country === 'german') return ' <span class="country-tag german">GERMAN</span>';
+  if (car.country === 'russian') return ' <span class="country-tag russian">RUSSIAN</span>';
+  return '';
+}
+function renderMarketCar(car) {
+  const canBuy = state.balance >= car.price;
+  const stats = car.isScooter ? (car.year + ' · Электросамокат') : (car.year + ' · ' + car.power + ' л.с.');
+  let extra = '';
+  if (car.isScooter) extra = ' scooter';
+  else if (car.country === 'german') extra = ' german';
+  else if (car.country === 'russian') extra = ' russian';
+  return '<div class="car-card' + extra + '"><div class="car-top"><div style="display:flex;gap:10px;align-items:center">' + renderCarImage(car) + '<div class="car-info"><div class="car-name">' + car.name + getCountryTag(car) + '</div><div class="car-year">' + stats + '</div></div></div><div><div class="car-price">' + formatMoney(car.price) + '</div><div class="car-price-label">Продажа: ' + formatMoney(car.sellPrice) + '</div></div></div><button class="btn btn-buy"' + (canBuy ? '' : ' disabled') + ' onclick="buyCar(' + car.id + ')">' + (canBuy ? '💰 Купить' : 'Недостаточно средств') + '</button></div>';
+}
+function renderGarageCar(car) {
+  const stats = car.isScooter ? (car.year + ' · Электросамокат') : (car.year + ' · ' + car.power + ' л.с.');
+  let extra = '';
+  if (car.isScooter) extra = ' scooter';
+  else if (car.country === 'german') extra = ' german';
+  else if (car.country === 'russian') extra = ' russian';
+  return '<div class="car-card owned' + extra + '"><div class="car-top"><div style="display:flex;gap:10px;align-items:center">' + renderCarImage(car) + '<div class="car-info"><div class="car-name">' + car.name + getCountryTag(car) + '</div><div class="car-year">' + stats + '</div></div></div><div><div class="car-price">' + formatMoney(car.sellPrice) + '</div><div class="car-price-label">Прибыль: +' + formatMoney(car.sellPrice - car.price) + '</div></div></div><button class="btn btn-sell" onclick="sellCar(' + car.id + ')">💸 Продать за ' + formatMoney(car.sellPrice) + '</button></div>';
+}
 
-    /* ===== РЫНОК ===== */
-    function generateMarket() {
-        state.market = [];
-        const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
-        for (let i = 0; i < 4; i++) {
-            const base = shuffled[i];
-            const variance = 0.85 + Math.random() * 0.3;
-            const price = Math.round(base.basePrice * variance);
-            state.market.push({ id: Date.now() + i + Math.random(), ...base, price, sellPrice: Math.round(price * 2) });
-        }
-        state.market.push({
-            id: Date.now() + 999 + Math.random(), ...KUGOO_SCOOTER,
-            price: KUGOO_SCOOTER.basePrice, sellPrice: KUGOO_SCOOTER.basePrice * 2
-        });
-        state.market.sort(() => Math.random() - 0.5);
-    }
-    function buyCar(id) {
-        const idx = state.market.findIndex(c => c.id === id);
-        if (idx === -1) return;
-        const car = state.market[idx];
-        if (state.balance < car.price) { showToast('❌ Недостаточно денег!', 'error'); return; }
-        state.balance -= car.price;
-        state.garage.push(car);
-        state.market.splice(idx, 1);
-        showToast('✅ Куплено: ' + car.name);
-        saveGame(); render();
-    }
-    function sellCar(id) {
-        const idx = state.garage.findIndex(c => c.id === id);
-        if (idx === -1) return;
-        const car = state.garage[idx];
-        state.balance += car.sellPrice;
-        state.garage.splice(idx, 1);
-        showToast('💰 Продано за ' + formatMoney(car.sellPrice));
-        saveGame(); render();
-    }
-    function switchTab(tab) {
-        state.activeTab = tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        const tabs = document.querySelectorAll('.tab');
-        if (tab === 'market') tabs[0].classList.add('active'); else tabs[1].classList.add('active');
-        render();
-    }
-    function render() {
-        document.getElementById('balance').textContent = formatMoney(state.balance);
-        const content = document.getElementById('content');
-        if (state.activeTab === 'market') {
-            if (state.market.length === 0) generateMarket();
-            content.innerHTML = `<div class="section-title">Доступные товары на рынке</div>${state.market.map(car => renderMarketCar(car)).join('')}`;
-        } else {
-            if (state.garage.length === 0) {
-                content.innerHTML = `<div class="empty"><div class="empty-icon">🚗</div><div class="empty-text">У вас пока нет машин.<br>Купите авто на рынке!</div></div>`;
-            } else {
-                const totalProfit = state.garage.reduce((s, c) => s + c.sellPrice, 0);
-                content.innerHTML = `<div class="section-title">Ваш гараж (${state.garage.length}) · Стоимость: ${formatMoney(totalProfit)}</div>${state.garage.map(car => renderGarageCar(car)).join('')}`;
-            }
-        }
-    }
-    function renderCarImage(car) {
-        if (car.image) {
-            return `<img class="car-image" src="${car.image}" alt="${car.name}" onerror="this.outerHTML='<div class=\\'car-emoji\\'>${car.emoji}</div>'">`;
-        }
-        return `<div class="car-emoji">${car.emoji}</div>`;
-    }
-    function getCountryTag(car) {
-        if (car.country === 'german') return ' <span class="country-tag german">GERMAN</span>';
-        if (car.country === 'russian') return ' <span class="country-tag russian">RUSSIAN</span>';
-        return '';
-    }
-    function getCountryClass(car) {
-        if (car.country === 'german') return ' german';
-        if (car.country === 'russian') return ' russian';
-        return '';
-    }
-    function renderMarketCar(car) {
-        const canBuy = state.balance >= car.price;
-        const stats = car.isScooter ? `${car.year} · Электросамокат` : `${car.year} · ${car.power} л.с.`;
-        let extraClass = '';
-        if (car.isScooter) extraClass = ' scooter';
-        else if (car.country === 'german') extraClass = ' german';
-        else if (car.country === 'russian') extraClass = ' russian';
-        return `
-            <div class="car-card${extraClass}">
-                <div class="car-top">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        ${renderCarImage(car)}
-                        <div class="car-info">
-                            <div class="car-name">${car.name}${getCountryTag(car)}</div>
-                            <div class="car-year">${stats}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="car-price">${formatMoney(car.price)}</div>
-                        <div class="car-price-label">Продажа: ${formatMoney(car.sellPrice)}</div>
-                    </div>
-                </div>
-                <button class="btn btn-buy" ${canBuy ? '' : 'disabled'} onclick="buyCar(${car.id})">${canBuy ? '💰 Купить' : 'Недостаточно средств'}</button>
-            </div>
-        `;
-    }
-    function renderGarageCar(car) {
-        const stats = car.isScooter ? `${car.year} · Электросамокат` : `${car.year} · ${car.power} л.с.`;
-        let extraClass = '';
-        if (car.isScooter) extraClass = ' scooter';
-        else if (car.country === 'german') extraClass = ' german';
-        else if (car.country === 'russian') extraClass = ' russian';
-        return `
-            <div class="car-card owned${extraClass}">
-                <div class="car-top">
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        ${renderCarImage(car)}
-                        <div class="car-info">
-                            <div class="car-name">${car.name}${getCountryTag(car)}</div>
-                            <div class="car-year">${stats}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="car-price">${formatMoney(car.sellPrice)}</div>
-                        <div class="car-price-label">Прибыль: +${formatMoney(car.sellPrice - car.price)}</div>
-                    </div>
-                </div>
-                <button class="btn btn-sell" onclick="sellCar(${car.id})">💸 Продать за ${formatMoney(car.sellPrice)}</button>
-            </div>
-        `;
-    }
+/* ===== АДМИНКА ===== */
+function openPasswordModal() {
+  document.getElementById('passwordModal').classList.add('active');
+  document.getElementById('passwordInput').value = '';
+  setTimeout(() => document.getElementById('passwordInput').focus(), 100);
+}
+function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); }
+function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if (input === ADMIN_PASSWORD) {
+    closePasswordModal(); openApp('admin');
+    showToast('👑 Добро пожаловать, админ!', 'admin');
+  } else {
+    showToast('❌ Неверный пароль!', 'error');
+    document.getElementById('passwordInput').value = '';
+  }
+}
+function addMoney(amount) {
+  state.balance += amount;
+  showToast('💰 +' + formatMoney(amount), 'admin');
+  saveGame(); render();
+}
+function giveKugoo() {
+  state.garage.push({ id: Date.now() + Math.random(), ...KUGOO_SCOOTER, price: KUGOO_SCOOTER.basePrice, sellPrice: KUGOO_SCOOTER.basePrice * 2 });
+  showToast('🛴 Kugoo G2 выдан!', 'scooter');
+  saveGame();
+}
+function renderAdminCars() {
+  const german = [], russian = [], other = [];
+  CAR_MODELS.forEach((car, i) => {
+    const cls = car.country === 'german' ? 'german' : car.country === 'russian' ? 'russian' : 'cheat';
+    const btn = '<button class="admin-btn ' + cls + '" onclick="giveCar(' + i + ')">' + car.emoji + ' ' + car.name + ' (' + car.year + ')</button>';
+    if (car.country === 'german') german.push(btn);
+    else if (car.country === 'russian') russian.push(btn);
+    else other.push(btn);
+  });
+  document.getElementById('adminGermanCars').innerHTML = german.join('');
+  document.getElementById('adminRussianCars').innerHTML = russian.join('');
+  document.getElementById('adminOtherCars').innerHTML = other.join('');
+}
+function giveCar(index) {
+  const base = CAR_MODELS[index];
+  state.garage.push({ id: Date.now() + Math.random(), ...base, price: base.basePrice, sellPrice: Math.round(base.basePrice * 2) });
+  let type = 'admin';
+  if (base.country === 'german') type = 'german';
+  else if (base.country === 'russian') type = 'russian';
+  showToast('🎁 Выдано: ' + base.name, type);
+  saveGame();
+}
+function clearGarage() {
+  if (confirm('Очистить весь гараж?')) {
+    state.garage = [];
+    showToast('🗑 Гараж очищен', 'admin');
+    saveGame();
+  }
+}
+function resetAll() {
+  if (confirm('Полный сброс игры? Все машины и деньги пропадут!')) {
+    state.balance = 10000; state.garage = [];
+    deleteSave(); generateMarket();
+    showToast('💥 Игра сброшена', 'admin');
+    saveGame(); render();
+  }
+}
 
-    /* ===== АДМИНКА ===== */
-    function openPasswordModal() {
-        document.getElementById('passwordModal').classList.add('active');
-        document.getElementById('passwordInput').value = '';
-        setTimeout(() => document.getElementById('passwordInput').focus(), 100);
-    }
-    function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); }
-    function checkPassword() {
-        const input = document.getElementById('passwordInput').value;
-        if (input === ADMIN_PASSWORD) {
-            closePasswordModal(); openApp('admin');
-            showToast('👑 Добро пожаловать, админ!', 'admin');
-        } else {
-            showToast('❌ Неверный пароль!', 'error');
-            document.getElementById('passwordInput').value = '';
-        }
-    }
-    function addMoney(amount) {
-        state.balance += amount;
-        showToast('💰 +' + formatMoney(amount), 'admin');
-        saveGame(); render();
-    }
-    function giveKugoo() {
-        state.garage.push({ id: Date.now() + Math.random(), ...KUGOO_SCOOTER, price: KUGOO_SCOOTER.basePrice, sellPrice: KUGOO_SCOOTER.basePrice * 2 });
-        showToast('🛴 Kugoo G2 выдан!', 'scooter');
-        saveGame();
-    }
-    function renderAdminCars() {
-        const german = [], russian = [], other = [];
-        CAR_MODELS.forEach((car, i) => {
-            const btn = `<button class="admin-btn ${car.country === 'german' ? 'german' : car.country === 'russian' ? 'russian' : 'cheat'}" onclick="giveCar(${i})">${car.emoji} ${car.name} (${car.year})</button>`;
-            if (car.country === 'german') german.push(btn);
-            else if (car.country === 'russian') russian.push(btn);
-            else other.push(btn);
-        });
-        document.getElementById('adminGermanCars').innerHTML = german.join('');
-        document.getElementById('adminRussianCars').innerHTML = russian.join('');
-        document.getElementById('adminOtherCars').innerHTML = other.join('');
-    }
-    function giveCar(index) {
-        const base = CAR_MODELS[index];
-        state.garage.push({
-            id: Date.now() + Math.random(), ...base,
-            price: base.basePrice, sellPrice: Math.round(base.basePrice * 2)
-        });
-        let type = 'admin';
-        if (base.country === 'german') type = 'german';
-        else if (base.country === 'russian') type = 'russian';
-        showToast('🎁 Выдано: ' + base.name, type);
-        saveGame();
-    }
-    function clearGarage() {
-        if (confirm('Очистить весь гараж?')) {
-            state.garage = [];
-            showToast('🗑 Гараж очищен', 'admin');
-            saveGame();
-        }
-    }
-    function resetAll() {
-        if (confirm('Полный сброс игры? Все машины и деньги пропадут!')) {
-            state.balance = 10000; state.garage = [];
-            deleteSave(); generateMarket();
-            showToast('💥 Игра сброшена', 'admin');
-            saveGame(); render();
-        }
-    }
+/* ===== ЧАСЫ ===== */
+const MONTHS = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DAYS = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours().toString().padStart(2,'0');
+  const m = now.getMinutes().toString().padStart(2,'0');
+  const time = h + ':' + m;
+  document.getElementById('clock').textContent = time;
+  document.getElementById('homeTime').textContent = time;
+  document.getElementById('homeDate').textContent = DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
+}
 
-    /* ===== ЧАСЫ ===== */
-    const MONTHS = ['января',
+/* ===== ЗАПУСК ===== */
+loadNotes();
+loadAppearance();
+applyAppearance();
+
+const loaded = loadGame();
+if (!loaded || state.market.length === 0) generateMarket();
+
+render();
+updateClock();
+setInterval(updateClock, 10000);
+setInterval(() => {
+  if (state.activeTab === 'market' && document.getElementById('autobuyScreen').classList.contains('active')) {
+    generateMarket(); saveGame(); render();
+  }
+}, 30000);
+setInterval(saveGame, 5000);
+window.addEventListener('beforeunload', saveGame);
+
+document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') checkPassword();
+});
+</script>
+</body>
+</html>
