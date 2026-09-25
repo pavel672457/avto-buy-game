@@ -190,6 +190,18 @@
         font-weight: 700;
     }
 
+    .header-btn {
+        background: none;
+        border: none;
+        color: #00ff88;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 5px 10px;
+        font-weight: 700;
+    }
+
+    .header-btn:active { opacity: 0.6; }
+
     /* ===== AUTOBUY APP ===== */
     #autobuyScreen { background: #0f0f1e; }
 
@@ -436,6 +448,150 @@
 
     .settings-item.admin .settings-item-text { color: #ff6666; }
 
+    /* ===== NOTES APP ===== */
+    #notesScreen { background: #0f0f1e; }
+
+    .notes-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        scrollbar-width: thin;
+        scrollbar-color: #ffd93d #1a1a2e;
+    }
+
+    .notes-list::-webkit-scrollbar { width: 4px; }
+    .notes-list::-webkit-scrollbar-track { background: #1a1a2e; }
+    .notes-list::-webkit-scrollbar-thumb { background: #ffd93d; border-radius: 2px; }
+
+    .note-card {
+        background: linear-gradient(135deg, #2a2a1a, #1a1a0e);
+        border-radius: 14px;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-left: 4px solid #ffd93d;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+    }
+
+    .note-card:active { transform: scale(0.98); }
+
+    .note-title {
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        padding-right: 30px;
+        word-break: break-word;
+    }
+
+    .note-preview {
+        color: #999;
+        font-size: 12px;
+        line-height: 1.4;
+        max-height: 38px;
+        overflow: hidden;
+        word-break: break-word;
+    }
+
+    .note-date {
+        color: #666;
+        font-size: 10px;
+        margin-top: 8px;
+    }
+
+    .note-delete {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 68, 68, 0.15);
+        border: none;
+        color: #ff4444;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .note-delete:active { background: rgba(255, 68, 68, 0.35); }
+
+    .notes-empty {
+        text-align: center;
+        padding: 80px 20px;
+        color: #555;
+    }
+
+    .notes-empty-icon { font-size: 70px; margin-bottom: 15px; opacity: 0.4; }
+    .notes-empty-text { font-size: 14px; line-height: 1.5; }
+
+    /* ===== NOTE EDITOR ===== */
+    #noteEditorScreen { background: #0f0f1e; }
+
+    .note-editor {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        overflow: hidden;
+    }
+
+    .note-input-title {
+        width: 100%;
+        background: #1a1a2e;
+        border: 1px solid #2a2a4a;
+        border-radius: 12px;
+        padding: 14px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .note-input-title:focus { border-color: #ffd93d; }
+    .note-input-title::placeholder { color: #555; }
+
+    .note-input-body {
+        flex: 1;
+        width: 100%;
+        background: #1a1a2e;
+        border: 1px solid #2a2a4a;
+        border-radius: 12px;
+        padding: 14px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        resize: none;
+        font-family: inherit;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+    .note-input-body:focus { border-color: #ffd93d; }
+    .note-input-body::placeholder { color: #555; }
+
+    .note-save-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #ffd93d, #f6c90e);
+        border: none;
+        border-radius: 12px;
+        color: #0f0f1e;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .note-save-btn:active { transform: scale(0.97); }
+
     /* ===== MODAL ===== */
     .modal-overlay {
         position: absolute;
@@ -631,6 +787,8 @@
     .toast.error { background: #ff4444; color: #fff; }
     .toast.admin { background: linear-gradient(135deg, #ff4444, #cc0000); color: #fff; }
     .toast.scooter { background: linear-gradient(135deg, #00e5ff, #0099cc); color: #0f0f1e; }
+    .toast.note { background: linear-gradient(135deg, #ffd93d, #f6c90e); color: #0f0f1e; }
+    .toast.save { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0f0f1e; }
 </style>
 </head>
 <body>
@@ -662,7 +820,7 @@
                 <div class="app-icon-img gallery">🖼️</div>
                 <div class="app-icon-label">Галерея</div>
             </div>
-            <div class="app-icon">
+            <div class="app-icon" onclick="openApp('notes')">
                 <div class="app-icon-img notes">📝</div>
                 <div class="app-icon-label">Заметки</div>
             </div>
@@ -769,6 +927,30 @@
         </div>
     </div>
 
+    <!-- ===== NOTES APP ===== -->
+    <div class="screen" id="notesScreen">
+        <div class="app-header">
+            <button class="back-btn" onclick="goHome()">←</button>
+            <div class="app-title">📝 Заметки</div>
+            <button class="header-btn" onclick="openNoteEditor()">＋</button>
+        </div>
+        <div class="notes-list" id="notesList"></div>
+    </div>
+
+    <!-- ===== NOTE EDITOR ===== -->
+    <div class="screen" id="noteEditorScreen">
+        <div class="app-header">
+            <button class="back-btn" onclick="openApp('notes')">←</button>
+            <div class="app-title" id="editorTitle">Новая заметка</div>
+            <div style="width: 40px;"></div>
+        </div>
+        <div class="note-editor">
+            <input type="text" class="note-input-title" id="noteTitle" placeholder="Заголовок...">
+            <textarea class="note-input-body" id="noteBody" placeholder="Текст заметки..."></textarea>
+            <button class="note-save-btn" onclick="saveNote()">💾 Сохранить</button>
+        </div>
+    </div>
+
     <!-- ===== ADMIN PANEL ===== -->
     <div class="screen" id="adminScreen">
         <div class="admin-header">
@@ -785,7 +967,6 @@
                 <button class="admin-btn cheat" onclick="addMoney(1000000)">+ $1 000 000</button>
             </div>
 
-            <!-- СПЕЦИАЛЬНЫЙ РАЗДЕЛ ДЛЯ KUGOO G2 -->
             <div class="admin-section">
                 <div class="admin-section-title">🛴 Электросамокат (эксклюзив)</div>
                 <button class="admin-btn scooter-btn" onclick="giveKugoo()">
@@ -836,10 +1017,8 @@
         { name: 'Ferrari 488', emoji: '🐎', year: 2023, basePrice: 180000, power: 670 },
     ];
 
-    // Фото Kugoo G2 — загружено тобой в репозиторий как 1.webp
     const KUGOO_IMAGE = '1.webp';
 
-    // Отдельный товар — Kugoo G2
     const KUGOO_SCOOTER = {
         name: 'Kugoo G2',
         emoji: '🛴',
@@ -851,6 +1030,7 @@
     };
 
     const ADMIN_PASSWORD = '1919';
+    const STORAGE_KEY = 'autobuy_save_v1';
 
     let state = {
         balance: 10000,
@@ -859,6 +1039,75 @@
         activeTab: 'market'
     };
 
+    /* ===== NOTES STATE ===== */
+    let notes = [];
+    let currentNoteId = null;
+
+    /* ==================== СОХРАНЕНИЕ / ЗАГРУЗКА ==================== */
+
+    // Сохранить всю игру (деньги, гараж, рынок)
+    function saveGame() {
+        try {
+            const save = {
+                balance: state.balance,
+                market: state.market,
+                garage: state.garage,
+                savedAt: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(save));
+        } catch (e) {
+            console.warn('Не удалось сохранить игру', e);
+        }
+    }
+
+    // Загрузить игру из localStorage
+    function loadGame() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return false;
+
+            const save = JSON.parse(raw);
+            if (!save || typeof save !== 'object') return false;
+
+            if (typeof save.balance === 'number') state.balance = save.balance;
+            if (Array.isArray(save.garage)) state.garage = save.garage;
+            if (Array.isArray(save.market) && save.market.length > 0) {
+                state.market = save.market;
+            }
+
+            return true;
+        } catch (e) {
+            console.warn('Не удалось загрузить игру', e);
+            return false;
+        }
+    }
+
+    // Сбросить сохранение
+    function deleteSave() {
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {}
+    }
+
+    /* ==================== ЗАМЕТКИ ==================== */
+    function loadNotes() {
+        try {
+            const saved = localStorage.getItem('autobuy_notes');
+            if (saved) notes = JSON.parse(saved);
+        } catch (e) {
+            notes = [];
+        }
+    }
+
+    function saveNotesToStorage() {
+        try {
+            localStorage.setItem('autobuy_notes', JSON.stringify(notes));
+        } catch (e) {
+            console.warn('Не удалось сохранить заметки');
+        }
+    }
+
+    /* ==================== SCREEN MANAGEMENT ==================== */
     function openApp(app) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         if (app === 'autobuy') {
@@ -869,6 +1118,9 @@
         } else if (app === 'admin') {
             document.getElementById('adminScreen').classList.add('active');
             renderAdminCars();
+        } else if (app === 'notes') {
+            document.getElementById('notesScreen').classList.add('active');
+            renderNotes();
         }
     }
 
@@ -888,6 +1140,126 @@
         setTimeout(() => toast.className = 'toast', 1800);
     }
 
+    /* ==================== NOTES FUNCTIONS ==================== */
+    function renderNotes() {
+        const list = document.getElementById('notesList');
+        if (notes.length === 0) {
+            list.innerHTML = `
+                <div class="notes-empty">
+                    <div class="notes-empty-icon">📝</div>
+                    <div class="notes-empty-text">
+                        У вас пока нет заметок.<br>
+                        Нажмите <b style="color:#ffd93d;">＋</b> вверху справа,<br>
+                        чтобы создать первую!
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const sorted = [...notes].sort((a, b) => b.updatedAt - a.updatedAt);
+
+        list.innerHTML = sorted.map(note => {
+            const title = note.title.trim() || 'Без названия';
+            const preview = note.body.trim() 
+                ? note.body.substring(0, 80).replace(/\n/g, ' ') + (note.body.length > 80 ? '...' : '')
+                : 'Пустая заметка';
+            return `
+                <div class="note-card" onclick="editNote(${note.id})">
+                    <button class="note-delete" onclick="event.stopPropagation(); deleteNote(${note.id})">🗑</button>
+                    <div class="note-title">${escapeHtml(title)}</div>
+                    <div class="note-preview">${escapeHtml(preview)}</div>
+                    <div class="note-date">${formatNoteDate(note.updatedAt)}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function formatNoteDate(timestamp) {
+        const d = new Date(timestamp);
+        const now = new Date();
+        const pad = n => n.toString().padStart(2, '0');
+        const time = pad(d.getHours()) + ':' + pad(d.getMinutes());
+        if (d.toDateString() === now.toDateString()) return 'Сегодня, ' + time;
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (d.toDateString() === yesterday.toDateString()) return 'Вчера, ' + time;
+        return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
+    }
+
+    function openNoteEditor() {
+        currentNoteId = null;
+        document.getElementById('editorTitle').textContent = 'Новая заметка';
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteBody').value = '';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('noteEditorScreen').classList.add('active');
+        setTimeout(() => document.getElementById('noteTitle').focus(), 200);
+    }
+
+    function editNote(id) {
+        const note = notes.find(n => n.id === id);
+        if (!note) return;
+        currentNoteId = id;
+        document.getElementById('editorTitle').textContent = 'Редактирование';
+        document.getElementById('noteTitle').value = note.title;
+        document.getElementById('noteBody').value = note.body;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('noteEditorScreen').classList.add('active');
+    }
+
+    function saveNote() {
+        const title = document.getElementById('noteTitle').value.trim();
+        const body = document.getElementById('noteBody').value.trim();
+
+        if (!title && !body) {
+            showToast('❌ Заметка пустая', 'error');
+            return;
+        }
+
+        const now = Date.now();
+
+        if (currentNoteId) {
+            const note = notes.find(n => n.id === currentNoteId);
+            if (note) {
+                note.title = title;
+                note.body = body;
+                note.updatedAt = now;
+            }
+            showToast('💾 Заметка обновлена', 'note');
+        } else {
+            notes.push({
+                id: now,
+                title: title,
+                body: body,
+                createdAt: now,
+                updatedAt: now
+            });
+            showToast('✨ Заметка создана', 'note');
+        }
+
+        saveNotesToStorage();
+        openApp('notes');
+    }
+
+    function deleteNote(id) {
+        if (!confirm('Удалить эту заметку?')) return;
+        notes = notes.filter(n => n.id !== id);
+        saveNotesToStorage();
+        showToast('🗑 Заметка удалена', 'note');
+        renderNotes();
+    }
+
+    /* ==================== MARKET ==================== */
     function generateMarket() {
         state.market = [];
         const shuffled = [...CAR_MODELS].sort(() => Math.random() - 0.5);
@@ -902,7 +1274,6 @@
                 sellPrice: Math.round(price * 2)
             });
         }
-        // Kugoo всегда на рынке по 55 000
         state.market.push({
             id: Date.now() + 999 + Math.random(),
             ...KUGOO_SCOOTER,
@@ -924,6 +1295,7 @@
         state.garage.push(car);
         state.market.splice(idx, 1);
         showToast('✅ Куплено: ' + car.name);
+        saveGame();
         render();
     }
 
@@ -934,6 +1306,7 @@
         state.balance += car.sellPrice;
         state.garage.splice(idx, 1);
         showToast('💰 Продано за ' + formatMoney(car.sellPrice));
+        saveGame();
         render();
     }
 
@@ -1036,6 +1409,7 @@
         `;
     }
 
+    /* ==================== ADMIN ==================== */
     function openPasswordModal() {
         document.getElementById('passwordModal').classList.add('active');
         document.getElementById('passwordInput').value = '';
@@ -1061,6 +1435,7 @@
     function addMoney(amount) {
         state.balance += amount;
         showToast('💰 +' + formatMoney(amount), 'admin');
+        saveGame();
         render();
     }
 
@@ -1072,6 +1447,7 @@
             sellPrice: KUGOO_SCOOTER.basePrice * 2
         });
         showToast('🛴 Kugoo G2 выдан!', 'scooter');
+        saveGame();
     }
 
     function renderAdminCars() {
@@ -1093,12 +1469,14 @@
             sellPrice: Math.round(price * 2)
         });
         showToast('🎁 Выдано: ' + base.name, 'admin');
+        saveGame();
     }
 
     function clearGarage() {
         if (confirm('Очистить весь гараж?')) {
             state.garage = [];
             showToast('🗑 Гараж очищен', 'admin');
+            saveGame();
         }
     }
 
@@ -1106,12 +1484,15 @@
         if (confirm('Полный сброс игры? Все машины и деньги пропадут!')) {
             state.balance = 10000;
             state.garage = [];
+            deleteSave();
             generateMarket();
             showToast('💥 Игра сброшена', 'admin');
+            saveGame();
             render();
         }
     }
 
+    /* ==================== CLOCK ==================== */
     const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
     const DAYS = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
 
@@ -1126,17 +1507,33 @@
             DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()];
     }
 
-    generateMarket();
+    /* ==================== INIT ==================== */
+    loadNotes();
+
+    // Пытаемся загрузить сохранение. Если нет — генерируем новый рынок
+    const loaded = loadGame();
+    if (!loaded || state.market.length === 0) {
+        generateMarket();
+    }
+
     render();
     updateClock();
     setInterval(updateClock, 10000);
 
+    // Обновление рынка каждые 30 сек (с сохранением)
     setInterval(() => {
         if (state.activeTab === 'market' && document.getElementById('autobuyScreen').classList.contains('active')) {
             generateMarket();
+            saveGame();
             render();
         }
     }, 30000);
+
+    // Автосохранение каждые 5 секунд (на всякий случай)
+    setInterval(saveGame, 5000);
+
+    // Сохранить при закрытии страницы
+    window.addEventListener('beforeunload', saveGame);
 
     document.getElementById('passwordInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkPassword();
